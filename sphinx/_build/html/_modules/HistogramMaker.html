@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>HistogramMaker &#8212; Research 2019 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for HistogramMaker</h1><div class="highlight"><pre>
+<span></span><span class="c1">#UNCOMMENT BELOW(IMPORT) BEFORE EXECUTING THE CODE</span>
+<span class="c1">#from matplotlib.pylab import *</span>
+
+
+<div class="viewcode-block" id="HistogramMaker"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker">[docs]</a><span class="k">class</span> <span class="nc">HistogramMaker</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is a class to make histograms from reading simulated GBT files.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HistogramMaker.chunky"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.chunky">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">chunky</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Divides a list into a list containing a lists of n number of elements.</span>
+
+<span class="sd">        :param list ls: a list to be divided</span>
+<span class="sd">        :param int n: a number of elements</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ls</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ls</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">n</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="HistogramMaker.hex_to_int"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.hex_to_int">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hex_to_int</span><span class="p">(</span><span class="n">ls</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Converts a list of hexadecimal strings to integers.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">new_ls</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)):</span>
+            <span class="n">new_ls</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="n">temp_slp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])):</span>
+                    <span class="n">slope_str</span> <span class="o">=</span> <span class="n">temp_slp</span> <span class="o">+</span> <span class="n">ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+                    <span class="n">temp_slp</span> <span class="o">=</span> <span class="n">slope_str</span>
+
+                <span class="n">slope</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_slp</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+                <span class="n">new_ls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_ls</span></div>
+
+<div class="viewcode-block" id="HistogramMaker.check"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Checks if there are headers (in other words, whether the file starts with &quot;a3&quot; or &quot;A3&quot;.)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">datafile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">datafile</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="s2">&quot;a3&quot;</span> <span class="ow">and</span> <span class="s2">&quot;A3&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> We can&#39;t find the header and we expect it! </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HistogramMaker.lines_to_lists"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.lines_to_lists">[docs]</a>    <span class="k">def</span> <span class="nf">lines_to_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Extracts slope information from a GBT file after checking if there are headers.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ls_hit_slope</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">readfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">readfile</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">slope</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">59</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">slope</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>        <span class="c1"># get rid of blanks &amp; keep the space btwn the parentheses</span>
+                    <span class="n">converted_slope</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">slope</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="n">ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted_slope</span><span class="p">)</span>
+            <span class="n">ls_hit_slope</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">ls_hit_slope</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ls_hit_slope</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="p">[]]</span>     <span class="c1"># get rid of empty lists</span>
+        <span class="n">new_ls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls_hit_slope</span><span class="p">)):</span>  <span class="c1"># convert into lists of four digits</span>
+            <span class="n">digit_list</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">chunky</span><span class="p">(</span><span class="n">ls_hit_slope</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">new_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">digit_list</span><span class="p">)</span>
+
+        <span class="n">slope_ls</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">hex_to_int</span><span class="p">(</span><span class="n">new_ls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">slope_ls</span></div>
+
+<div class="viewcode-block" id="HistogramMaker.slope_each_pl"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.slope_each_pl">[docs]</a>    <span class="k">def</span> <span class="nf">slope_each_pl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Assigns slope data for each of the eight planes</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">]</span>
+        <span class="n">slope_ls</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">lines_to_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slope_ls</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">slope_ls</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">slope_ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">pl</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slope_ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+
+        <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v0</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u0</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u1</span><span class="p">)</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">x0</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">x3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span></div>
+
+<div class="viewcode-block" id="HistogramMaker.plot_histogram"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.plot_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">plot_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">second_file</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plots hit slope histograms for all eight planes.::</span>
+
+<span class="sd">            # Plotting a histogram of one example simulated GBT file.</span>
+<span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_histogram()</span>
+<span class="sd">            # Plotting one histogram of combined data from two example simulated GBT files.</span>
+<span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_histogram(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;)</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">slope_each_pl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> \
+                                         <span class="n">result</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">second_file</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>   <span class="c1"># In case there are two files to be combined for one histogram</span>
+            <span class="n">result2</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="p">(</span><span class="n">second_file</span><span class="p">)</span><span class="o">.</span><span class="n">slope_each_pl</span><span class="p">()</span>
+            <span class="n">second_title</span> <span class="o">=</span> <span class="s2">&quot; and &quot;</span><span class="o">+</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">second_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; combined&quot;</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">second_title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">pl_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v0&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;u0&#39;</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">]</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span><span class="p">,</span> <span class="n">ax5</span><span class="p">,</span> <span class="n">ax6</span><span class="p">,</span> <span class="n">ax7</span><span class="p">,</span> <span class="n">ax8</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">pl_names</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">1.8</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Slope Hits Histograms: </span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">second_title</span><span class="p">))</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">]</span>
+        <span class="n">axs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span><span class="p">,</span> <span class="n">ax5</span><span class="p">,</span> <span class="n">ax6</span><span class="p">,</span> <span class="n">ax7</span><span class="p">,</span> <span class="n">ax8</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">data_ls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axs</span><span class="p">)):</span>
+            <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span><span class="p">)</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="mi">10</span><span class="p">)),</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">)</span> <span class="c1">#histtype=step speeds up plotting process</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> Plane&quot;</span> <span class="o">%</span> <span class="n">pl_names</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">yval</span><span class="p">,</span> <span class="n">xval</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">yval</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">yval</span> <span class="o">!=</span> <span class="n">prev</span><span class="p">:</span>
+                    <span class="n">prev</span> <span class="o">=</span> <span class="n">yval</span>
+                    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">yval</span><span class="p">),</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">xval</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">data_ls</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span><span class="p">])</span>
+
+        <span class="n">ls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_ls</span><span class="p">)):</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">data_ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">data_ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">ls</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;  channel=</span><span class="si">%s</span><span class="s1">, num_hits=</span><span class="si">%s</span><span class="s1">  &#39;</span><span class="o">%</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="n">j</span><span class="p">])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;file = </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> v0 = </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> v1 = </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> x0 = </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">ls</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ls</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ls</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+        <span class="n">ax8</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Slope Value&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">ax5</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Slope Hits&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+
+<span class="c1">#HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_histogram(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;)</span>
+<span class="c1">#HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;).plot_histogram()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Research 2019</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../GbtPacketMaker.html">GbtPacketMaker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistogramMaker.html">HistogramMaker</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Ki Ryeong Park.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

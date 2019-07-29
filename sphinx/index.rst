@@ -6,6 +6,7 @@ Welcome to Research 2019's documentation!
    :maxdepth: 2
    
    GbtPacketMaker
+   HistogramMaker
 
 Indices and tables
 ==================

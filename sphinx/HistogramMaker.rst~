@@ -1,7 +1,7 @@
-GbtPacketMaker 
+HistogramMaker 
 =====================
 
-.. automodule:: GbtPacketMaker
+.. automodule:: HistogramMaker
    :members:
    :undoc-members:
    :show-inheritance:

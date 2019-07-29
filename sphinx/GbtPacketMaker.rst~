@@ -1,7 +1,7 @@
-Documentation for GbtPacketMaker
-=================================
-
+GbtPacketMaker module
+=====================
 
 .. automodule:: GbtPacketMaker
    :members:
- 
+   :undoc-members:
+   :show-inheritance:

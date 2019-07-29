@@ -12,8 +12,8 @@
 #
 import os
 import sys
+#sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('.'))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -32,7 +32,6 @@ release = '0.0.1'
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode', 
               'sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.githubpages'
-
 ]
 
 # Add any paths that contain templates here, relative to this directory.
