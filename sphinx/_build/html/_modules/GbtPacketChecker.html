@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>GbtPacketChecker &#8212; Research 2019 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for GbtPacketChecker</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">GbtPacketMaker</span>
+
+<div class="viewcode-block" id="GbtPacketChecker"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker">[docs]</a><span class="k">class</span> <span class="nc">GbtPacketChecker</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">input_gbt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_gbt</span> <span class="o">=</span> <span class="n">input_gbt</span>
+
+<div class="viewcode-block" id="GbtPacketChecker.chunky"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.chunky">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">chunky</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Divides a list into a list containing a lists of n number of elements.</span>
+
+<span class="sd">        :param list ls: a list to be divided</span>
+<span class="sd">        :param int n: a number of elements</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ls</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ls</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">n</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span><span class="p">)]</span></div>
+
+        <span class="c1"># DO I NEED TO CHECK PARITY?</span>
+<div class="viewcode-block" id="GbtPacketChecker.extract"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>          <span class="c1"># extract specific bits and make them into lists of #&#39;s</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Extracts specific bits and make them into corresponding lists of Hit Map, ART data, and Region data.</span>
+<span class="sd">        :return: Hit Map, ART data, Region Number</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">copy</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_gbt</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>    <span class="c1"># locate and open file</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s1">&#39;00000001 01&#39;</span><span class="p">:</span>
+                <span class="n">copy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">hitmap</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="n">copy</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>    <span class="c1">#read second line 2:7 and third line 0:1 for hit map</span>
+        <span class="n">artdata</span> <span class="o">=</span><span class="n">copy</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">4</span><span class="p">:]</span> <span class="o">+</span> <span class="n">copy</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>           <span class="c1"># third line 4:7 and fourth line 0:7 for art data</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">hitmap</span><span class="p">,</span> <span class="n">artdata</span><span class="p">,</span> <span class="n">region</span></div>
+
+
+<div class="viewcode-block" id="GbtPacketChecker.read_hitmap"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.read_hitmap">[docs]</a>    <span class="k">def</span> <span class="nf">read_hitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Converts Hit Map into a list that contains information about planes and vmm&#39;s hit: e.g. [0.2, 2.1] when the third vmm of the first plane and the second vmm of the third plane are hit.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">hitmap</span><span class="p">,</span> <span class="n">artdata</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">hitmap_bin</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">hitmap</span><span class="p">:</span>         <span class="c1"># convert hexadecimal digits to integer to binary</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">each</span><span class="p">,</span> <span class="mi">16</span><span class="p">))[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">hitmap_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hitmap_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="mi">4</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span><span class="o">*</span><span class="s2">&quot;0&quot;</span><span class="o">+</span><span class="n">temp</span><span class="p">))</span>
+
+        <span class="n">hitmap_pl</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">chunky</span><span class="p">(</span><span class="n">hitmap_bin</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>   <span class="c1"># consolidate into groups of two sets of four digits</span>
+        <span class="n">hitmap_ls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">hitmap_pl</span><span class="p">:</span>      <span class="c1"># e.g. [&#39;00000100&#39;, &#39;00000100&#39;, &#39;00000101&#39;, &#39;00000100&#39;]</span>
+            <span class="n">hitmap_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">each</span><span class="p">)))</span>
+
+        <span class="n">hitmap_read</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hitmap_ls</span><span class="p">)):</span>                     <span class="c1"># [3.2, 2.2, 1.2, 1.0, 0.2]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hitmap_ls</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">hitmap_ls</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
+                    <span class="n">hitmap_read</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">3</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="nb">round</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="mi">7</span><span class="o">-</span><span class="n">j</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># flips the list</span>
+
+        <span class="n">hitmap_read</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">hitmap_read</span>        <span class="c1"># return lists of hit vmm&#39;s and number of hits</span></div>
+
+<div class="viewcode-block" id="GbtPacketChecker.read_artdata"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.read_artdata">[docs]</a>    <span class="k">def</span> <span class="nf">read_artdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>     <span class="c1"># read and convert ART data</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Converts ART data into a list of hit channels: e.g. [37, 28] when channel numbers 37 and 28 are hit.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">hitmap</span><span class="p">,</span> <span class="n">artdata</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">artdata_int</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">artdata_dig</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">artdata</span><span class="p">:</span>
+            <span class="n">artdata_int</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">each</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+            <span class="n">artdata_dig</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">each</span><span class="p">,</span> <span class="mi">16</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">artdata_dig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span><span class="s1">&#39;0000&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artdata_dig</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">artdata_dig</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;0000&#39;</span><span class="p">:</span>
+                    <span class="n">artdata_dig</span> <span class="o">=</span> <span class="n">artdata_dig</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="k">break</span>
+
+        <span class="n">artdata</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">artdata_dig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">artdata</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">artdata</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span><span class="o">*</span><span class="p">(</span><span class="mi">6</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artdata</span><span class="p">)</span><span class="o">%</span><span class="mi">6</span><span class="p">))</span> <span class="o">+</span> <span class="n">artdata</span>
+
+        <span class="n">artdata_six</span> <span class="o">=</span> <span class="p">[</span><span class="n">artdata</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="o">+</span><span class="mi">6</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">artdata</span><span class="p">),</span> <span class="mi">6</span><span class="p">)]</span>
+        <span class="n">artdata_read</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">artdata_six</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artdata_six</span><span class="p">))]</span>
+        <span class="n">artdata_read</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>      <span class="c1">#    IMPORTANT TO REVERSE</span>
+        <span class="k">return</span> <span class="n">artdata_read</span></div>
+
+<div class="viewcode-block" id="GbtPacketChecker.check"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">):</span>            <span class="c1"># check if hit map and art data are correct</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Checks if the actual GBT packet follow the expected / intended hits pattern by comparing the produced list to the input list.</span>
+<span class="sd">        Just like the output format of read_hitmap() and read_artdata(), the input format of check() should be [plane.vmm, ...][channel, ...]</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">hitmap_read</span><span class="p">,</span> <span class="n">artdata_read</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">read_hitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">read_artdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">)))</span> <span class="c1"># in case not in order</span>
+        <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">artdata_intended</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">artdata_read</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: The lengths of hit map and ART data read don&#39;t match up. Fix the code.&quot;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">hitmap_read</span><span class="o">==</span> <span class="n">hitmap_intended</span> <span class="ow">and</span> <span class="n">artdata_read</span> <span class="o">==</span> <span class="n">artdata_intended</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hit map read=</span><span class="si">%s</span><span class="s2"> and ART data read=</span><span class="si">%s</span><span class="s2"> match up with intended hits=</span><span class="si">%s%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hitmap_read</span><span class="p">,</span> <span class="n">artdata_read</span><span class="p">,</span> <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hit map read=</span><span class="si">%s</span><span class="s2"> and ART data read=</span><span class="si">%s</span><span class="s2"> don&#39;t match up with intended hits=</span><span class="si">%s%s</span><span class="s2">.&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">,</span><span class="n">artdata_read</span><span class="p">,</span> <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="GbtPacketChecker.identify_vmm"><a class="viewcode-back" href="../GbtPacketChecker.html#GbtPacketChecker.GbtPacketChecker.identify_vmm">[docs]</a>    <span class="k">def</span> <span class="nf">identify_vmm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">):</span>     <span class="c1"># identify which vmm&#39;s are in correctly connected</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Checks if there are possibility of misconnected fibers:</span>
+<span class="sd">        If there are only two hits that might be mismatched, the function determines whether the corresponding two planes&#39; fibers are mismatched or not.</span>
+<span class="sd">        If there are more than two hits that might be mismatched, the function prints which planes has multiple hits in {pl: count, ...} format.::</span>
+
+
+<span class="sd">            # First make a GBT packet</span>
+<span class="sd">            GbtPacketMaker.GbtPacketMaker([0.2, 1.0, 1.2, 2.2 3.2],[10,10,12,11,10]).make_gbt(32, 20, &quot;test&quot;,&quot;yes&quot;)</span>
+<span class="sd">            test1 = GbtPacketChecker(&quot;GBT_packet_dir_test/&quot;,&quot;GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]&quot;)</span>
+<span class="sd">            test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 12, 11, 10])</span>
+<span class="sd">            test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 11, 12, 10] # third and fourth fibers swapped</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">region</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">hitmap_read</span><span class="p">,</span> <span class="n">artdata_read</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">read_hitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">read_artdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">)))</span>  <span class="c1"># in case not in order</span>
+        <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">artdata_intended</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intended hits and hitmap and ART data read match up so no need for further investigation.&quot;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">,</span> <span class="n">artdata_intended</span><span class="p">,</span> <span class="n">hitmap_read</span><span class="p">,</span> <span class="n">artdata_read</span><span class="p">)</span>
+        <span class="n">truncated_intended_ls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">))]</span>
+        <span class="n">truncated_read_ls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">))]</span>
+        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">artdata_read</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">artdata_intended</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">truncated_read_ls</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">truncated_intended_ls</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Possibility of planes with misconnected fibers&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No possibility planes with misconnected fibers. Find the cause of the mismatch problem elsewhere.&quot;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">()</span>
+
+        <span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">not_matched</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">[</span><span class="n">hitmap_intended</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">artdata_intended</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="p">[</span><span class="n">hitmap_read</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">artdata_read</span><span class="p">[</span><span class="n">i</span><span class="p">]]:</span>   <span class="n">match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>   <span class="n">not_matched</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1">#KEEP TRACK OF ALL THE MULTIPLE PLANES</span>
+        <span class="k">def</span> <span class="nf">track_pl_hit</span><span class="p">(</span><span class="n">input_pl_ls</span><span class="p">):</span>
+            <span class="n">pl_ls</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">pl</span><span class="p">)</span> <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">input_pl_ls</span><span class="p">]</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">pl_ls</span><span class="p">)</span>
+            <span class="n">multiple_hit_pl</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pl_ls</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">count</span><span class="p">[</span><span class="n">pl</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">multiple_hit_pl</span><span class="p">[</span><span class="n">pl</span><span class="p">]</span><span class="o">=</span><span class="n">count</span><span class="p">[</span><span class="n">pl</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">multiple_hit_pl</span>     <span class="c1">#{pl: count, ...}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">track_pl_hit</span><span class="p">(</span><span class="n">hitmap_read</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">multiple_hit_pl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">track_pl_hit</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are multiple hits on this/these planes :plane </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">multiple_hit_pl</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">not_matched</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">[</span><span class="n">each</span><span class="p">])</span> <span class="ow">in</span> <span class="n">multiple_hit_pl</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Among the possible candidates, there is/are ones with multiple hits on planes which need to be checked.&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hitmap_intended</span><span class="p">[</span><span class="n">each</span><span class="p">]),</span> <span class="n">multiple_hit_pl</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">not_matched</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_matched</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">region</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">pl_ls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;u0&#39;</span><span class="p">,</span> <span class="s1">&#39;v0&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pl_ls</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> are possible candidates of their fibers being swapped.&quot;</span><span class="o">%</span><span class="p">([</span><span class="n">pl_ls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">not_matched</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_matched</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;More than two planes that are possible candidates of misconnected fibers.&quot;</span><span class="p">)</span></div></div>
+
+
+<span class="c1">#GbtPacketMaker.GbtPacketMaker([0.0, 1.0, 2.0, 3.0],[1,2,1,2,13]).make_gbt(32, 20, &quot;test&quot;,&quot;yes&quot;)</span>
+<span class="c1">#test1 = GbtPacketChecker(&quot;GBT_packet_dir_test/&quot;,&quot;GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]&quot;)</span>
+<span class="c1"># test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])</span>
+<span class="c1"># test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10]</span>
+<span class="c1">#test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])  # third and fourth fiber swapped</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Research 2019</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../GbtPacketMaker.html">GbtPacketMaker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../GbtPacketChecker.html">GbtPacketChecker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../HistogramMaker.html">HistogramMaker</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Ki Ryeong Park.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
