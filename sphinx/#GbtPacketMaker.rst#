@@ -1,0 +1,11 @@
+Documentation for GbtPacketMaker
+=================================
+
+Introduction
+____________________________________________________________
+'''GbtpacketMaker allows users to make GBT packets using user inputs.
+'''
+
+.. automodule:: GbtPacketMaker
+   :members:
+ 
