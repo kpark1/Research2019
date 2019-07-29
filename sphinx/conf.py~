@@ -58,3 +58,6 @@ html_static_path = ['_static']
 
 # If true, 'todo' and 'todoList' pproduce output, else they produce nothing.
 todo_include_todos = True
+
+# Prevent sorting members in alphabetical order
+autodoc_member_order = 'bysource'
