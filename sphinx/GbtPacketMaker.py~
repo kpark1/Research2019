@@ -11,23 +11,16 @@ class GbtPacketMaker:
     def __init__(self, input_vmm_list, input_channel_list):
         '''
         Initializes GbtPacketMaker object.
-        
-        Parameters
-        ----------
-        input_vmm_list : list
-            list of plane and vmm information  
+
         '''
         vmm_list, channel_list = zip(*sorted(zip(input_vmm_list, input_channel_list)))  # IMPT: sort the input vmm and channel pairs from smallest to largest
         self.vmm_list = list(vmm_list)
         self.channel_list = list(channel_list)
 
     @staticmethod
-    def align(ls):          # align all elements in lists within lists
+    def align(ls):
         '''
-        Align all elements in lists within lists
-        
-
-        par list list: list to be aligned
+        Concatenates lists within lists into one list.
         '''
         aligned = []
         for plane in ls:
@@ -36,13 +29,22 @@ class GbtPacketMaker:
         return aligned
 
     @staticmethod
-    def chunky(ls, n):      # divide into lists of n elements
+    def chunky(ls, n):
+        '''                                                                                                                                                                  
+        Divides a list into a list containing a lists of n number of elements.
+                                                                                                                                                                             
+        :param list ls: a list to be divided
+        :param int n: a number of elements
+        '''
         while len(ls)%n != 0:
             ls.insert(0, 0)
         return [ls[i * n:(i + 1) * n] for i in range((len(ls) + n - 1)//n)]
 
     @staticmethod
-    def read_chunks(ls):    # read a list of lists of four integers interpreting them as a binary number
+    def read_chunks(ls):
+        '''
+        Converts a list of lists of four integers into a list of binary numbers.
+        '''
         chunks_read = []    # e.g. [[1,1,0,1],[0,0,1,0]] would be translated into [13, 2]
         for each in ls:
             count = 3 # NEED TO BE CHANGED TO ACCOMMODATE FOR N'S; currently only works for converting into 4 elements
@@ -56,7 +58,10 @@ class GbtPacketMaker:
         return chunks_read
 
     @staticmethod
-    def to_hex(ls):         # convert a number into a hexadecimal string
+    def to_hex(ls):
+        '''
+        Converts a list of integers into a list of hexadecimal strings.
+        '''
         final = hex(0)
         for each in ls:
             final += hex(each)[2:]      # changes from 0xf to f
@@ -65,13 +70,27 @@ class GbtPacketMaker:
         return final
 
     @staticmethod
-    def sorted_alphanumeric(data):      # sort in alphanumerical way
+    def sorted_alphanumeric(ls):      # sort in alphanumerical way
+        '''
+        Sorts list of files in alphanumerical way. It is necessary to align GBT packets in an ascending order of BC
+        and pair numbers when combining GBT packets to minimize the running time for simulation.
+        '''
         convert = lambda text: int(text) if text.isdigit() else text.lower()
         alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-        return sorted(data, key=alphanum_key)
+        return sorted(ls, key=alphanum_key)
 
     @staticmethod
-    def combine_gbt(dir_name, typ, num_fibers):
+    def combine_gbt(dir_name, typ, num_regions):
+        '''
+        Combines all GBT files of a specific pattern of regions.
+
+        :param str dir_name: directory where GBT packets are stored
+        :param "all"/"pair" typ: If typ is "all", all GBT packets are combined
+            into one file with a single finish command  ( or '00000001 01'). If typ is "pair", individual GBT pairs are combined
+            into one file each pairs with finish command. If typ is neither of those, exit() is executed.
+        :param int num_regions: number of regions e.g. Regions 20, 21 are two regions
+        :return: a single file if typ is "all" and a set of files if typ is "pair"
+        '''
         file_ls = GbtPacketMaker.sorted_alphanumeric(os.listdir(dir_name))  # sort the files in the same directory
         if typ == "all":    #if combining all in the directory
             file_ls = [dir_name + file for file in file_ls]                       # add directory path
@@ -84,9 +103,9 @@ class GbtPacketMaker:
                 out_file.write(fin_line)
                 out_file.close()
 
-        if typ == "pair":     # if individual packet pair
+        elif typ == "pair":     # if individual packet pair
 
-            ls = GbtPacketMaker.chunky(file_ls, num_fibers)
+            ls = GbtPacketMaker.chunky(file_ls, num_regions)
             directory = "combined_" + dir_name
             if not os.path.exists(os.path.dirname(directory)):
                 try:
@@ -111,8 +130,18 @@ class GbtPacketMaker:
                         out_file.write(fin_line)
                         out_file.close()
 
+        else:
+            print("Wrong type input for the combine.gbt function")
+            exit()
+
+
     def align_vmm(self):
         # visualize aligned vmm of all planes
+        '''
+        Returns a list of 0's and 1's to help visualize hit vmm's of all planes.
+        The list reads right to left: The last 8th vmm of the fourth plane is the first element of the list and the
+        first vmm of the first plane is the last element of the list.
+        '''
         vmm_each_plane = [[], [], [], [], [], [], [], []]  # separates into each plane
 
         for i in range(len(self.vmm_list)):
@@ -133,7 +162,10 @@ class GbtPacketMaker:
         vmm_aligned = GbtPacketMaker.align(vmm_bin)
         return vmm_aligned
 
-    def read_vmm(self): # Hit Map Creator
+    def read_vmm(self):
+        '''
+        Returns a string of Hit Map that corresponds to the input of the class instance or input list of hit planes and vmm's.
+        '''
         vmm = GbtPacketMaker.align_vmm(self)
         vmm_chunks = GbtPacketMaker.chunky(vmm, 4)
         hit_map_almost = GbtPacketMaker.read_chunks(vmm_chunks)
@@ -149,7 +181,9 @@ class GbtPacketMaker:
         return hit_map
 
     def read_channel(self):  # ART data Creator
-
+        '''
+        Returns a string of ART DATA that corresponds to the input of the class instance or input list of hit channels.
+        '''
         channel = []
         channel_ls = self.channel_list[::-1]            # same as reverse function (by slicing)
 
@@ -170,6 +204,9 @@ class GbtPacketMaker:
         return art_data
 
     def find_parity(self):
+        '''
+        Returns a string of parity by interpreting hit channels.
+        '''
         ls = []
         for channel in self.channel_list:
             channel_bin = '{0: 04b}'.format(channel)
@@ -190,7 +227,18 @@ class GbtPacketMaker:
         parity = GbtPacketMaker.to_hex(chunks_read).upper()
         return parity
 
-    def make_gbt(self, BCID, fiber, directory_name, add_line, second_dir="none"):
+    def make_gbt(self, BCID, region, directory_name, add_line, second_dir="none"):
+        '''
+        Creates a GBT packet file with a corresponding input information. If a directory doesn't exist already,
+        the function will create a new directory.
+
+        :param int BCID: BC number. Preferably a multiple of 32.
+        :param int region: Region. e.g. 20 for first region.
+        :param str directory_name: Name of directory to store the GBT packet.
+        :param "yes"/"no" add_line: If creating a single GBT file to be simulated, then add_line should be "yes", which adds a finish command line. If creating a multiple GBT files of one more more regions to be combined later, add_line should be "no".
+        :param "none"/str/optional second_dir: a name of the second directory if necessary when storing multiple GBT files.
+
+        '''
         bcid_converted = hex(BCID)[2:].upper()
         if len(bcid_converted) > 3:          # Important
             print("BC %s is too large. Fix the pattern code to limit BC number maximum." %BCID)
@@ -208,8 +256,8 @@ class GbtPacketMaker:
         final = header + error + hit_map+ parity+ art_data
         # print("hit map = %s parity = %s art data = %s " %(hit_map, parity,art_data))
 
-        add = str(fiber)   # e.g." 20"
-        output_file = "GBT_packet_BC=%s_fiber=%s_%s" % (BCID, fiber, tag)
+        add = str(region)   # e.g." 20"
+        output_file = "GBT_packet_BC=%s_region=%s_%s" % (BCID, region, tag)
         if second_dir.lower() == "none":
             directory = "GBT_packet_dir_%s/" % directory_name
         else:
@@ -241,24 +289,40 @@ class GbtPacketMaker:
             print("Not created file content is %s" % final)
 
     @staticmethod
-    def vertical_pattern(region, pairs, offset, bc_gap_region, bc_start, bc_gap_pl=0):
-        if "lower" in region and offset in [0, 1, 2, 3]:        # e.g. offset = 2
+    def vertical_pattern(section, regions, offset, bc_gap=32, bc_gap_region=0, bc_gap_pl=0, second_dir_name="second"):
+        '''
+        Creates GBT packet files in a new directory and a combined file that has all GBT packets in a current directory
+        to simulate a vertical pattern of hits in detector. If BC ID exceeds 4095, then a second directory is created
+        and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.::
+
+
+            GbtPacketMaker.vertical_pattern("upper", [20,21, 22, 23], 4, bc_gap=96, second_dir_name='2')
+
+
+        :param "upper"/"lower"/"upper_specific"/"lower_specific" section: "lower" if channels hit should be of lower section or [0, 1, 2, 3, 8, 9, ...] and "upper" if channels are from [4, 5, 6, 7, 12, 13, 14, ...]. If "*_specific", then GBT packets are combined into pairs insteand of one combined file.
+        :param list regions: regions for hits e.g. [20, 21]
+        :param int offset: Hit channel offset for x planes. 0, 1, 2, or 3 if section = "lower", 4, 5, 6, or 7 if section = "upper".
+        :param 32/int/optional bc_gap: BC ID difference between each GBT packets within the same region.
+        :param 0/int/optional bc_gap_region: BC ID difference between different regions. The default value is 0.
+        :param 0/int/optional bc_gap_pl:  BC ID difference between planes. The default value is 0.
+        :param "second"/str/optional second_dir_name: name of second directory if second directory is necessary.
+        '''
+
+        if "lower" in section and offset in [0, 1, 2, 3]:        # e.g. offset = 2
             pass
-        elif "upper" in region and offset in [4, 5, 6, 7]:     # e.g. offset = 4
+        elif "upper" in section and offset in [4, 5, 6, 7]:     # e.g. offset = 4
             pass
         else:
-            print("Wrong Region or offset")
+            print("Wrong section or offset")
             exit()
 
         channels = [offset + 8 * i for i in range(8)]
-        print(channels)
-        dir_name = 'vert_%s_%s_offset%s_bc_gap_%s_bc_start_%s_bc_gap_pl_%s' % (region, pairs, offset, bc_gap_region, bc_start, bc_gap_pl)
+        dir_name = 'vert_%s_%s_offset%s_bc_gap_%s_%s_bc_gap_pl_%s' % (section, regions, offset, bc_gap_region, bc_gap, bc_gap_pl)
         path = "GBT_packet_dir_%s/" % dir_name
-        second_dir_name = "second"
         path2 = "GBT_packet_dir_%s_%s/" % (dir_name, second_dir_name)
         k = 0
-        for i in range(len(pairs)):
-            bc = bc_start + k  # impt to place this here for the pair to have the symmetrical list of BC's
+        for i in range(len(regions)):
+            bc = bc_gap + k  # impt to place this here for the regions to have the symmetrical list of BC's
             for ch in channels:
                 pl = [[],[],[],[]]
                 for n in range(8):  # repeat as many as the number of vmm's in each region = 8 vmm's in one fiber
@@ -268,57 +332,79 @@ class GbtPacketMaker:
                     pl[3] = 3.0 + round(n * (10 ** (-1)), 1)
                     if bc < 4096:       # max number of bc is 4095
                         if bc_gap_pl == 0:
-                            GbtPacketMaker(pl,[ch,ch,ch,ch]).make_gbt(bc, pairs[i], dir_name, "no")
+                            GbtPacketMaker(pl,[ch,ch,ch,ch]).make_gbt(bc, regions[i], dir_name, "no")
                         else:
                             for j in range(4):
-                                GbtPacketMaker([pl[j]],[ch]).make_gbt(bc+j, pairs[i], dir_name, "no")
+                                GbtPacketMaker([pl[j]],[ch]).make_gbt(bc+j, regions[i], dir_name, "no")
 
                     else:
                         temp_bc = bc - 4095             # add a separate directory for BC that are too large
                         if bc_gap_pl == 0:
-                            GbtPacketMaker(pl, [ch,ch,ch,ch]).make_gbt(temp_bc, pairs[i], dir_name, "no", second_dir_name)
+                            GbtPacketMaker(pl, [ch,ch,ch,ch]).make_gbt(temp_bc, regions[i], dir_name, "no", second_dir_name)
                         else:
                             for j in range(4):
-                                GbtPacketMaker([pl[j]],[ch]).make_gbt(temp_bc+j, pairs[i], dir_name, "no", second_dir_name)
+                                GbtPacketMaker([pl[j]],[ch]).make_gbt(temp_bc+j, regions[i], dir_name, "no", second_dir_name)
 
-                    bc += bc_start
+                    bc += bc_gap
 
             if i % 2 != 0:
                  k += bc_gap_region
 
-        if "specific" in region:
-            GbtPacketMaker.combine_gbt(path, "pair", len(pairs))
+        if "specific" in section:
+            GbtPacketMaker.combine_gbt(path, "pair", len(regions))
             print("Combined file created")
             if os.path.exists(os.path.dirname(path2)):
-                GbtPacketMaker.combine_gbt(path2, "pair", len(pairs))
+                GbtPacketMaker.combine_gbt(path2, "pair", len(regions))
                 print("Combined file 2 created")
         else:
-            GbtPacketMaker.combine_gbt(path, "all", len(pairs))    # CHANGE TO "pair" if wanting to combine in gbt pairs not all produced
+            GbtPacketMaker.combine_gbt(path, "all", len(regions))    # CHANGE TO "pair" if wanting to combine in gbt pairs not all produced
             print("Combined file created")
             if os.path.exists(os.path.dirname(path2)):
-                GbtPacketMaker.combine_gbt(path2, "all", len(pairs)) # combine the second file as well
+                GbtPacketMaker.combine_gbt(path2, "all", len(regions)) # combine the second file as well
                 print("Combined file 2 created")
 
     @staticmethod
-    def horizontal_pattern(region, x_offset, x_vmm, x_ch_idx, pairs, input_uv_offset, uv_dir="none",  bc_gap_region=0, bc_start=32, bc_gap_pl=0):
+    def horizontal_pattern(section, regions, offset, x_vmm, x_ch_idx, input_uv_offset, uv_dir="none",
+                           bc_gap=32, bc_gap_region=0, bc_gap_pl=0, second_dir_name="second"):
+        '''
+        Creates GBT packet files in a new directory and a combined file that has all GBT packets in a current directory
+        to simulate a horizontal pattern of hits in detector. If BC ID exceeds 4095, then a second directory is created
+        and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.::
+
+
+            GbtPacketMaker.horizontal_pattern("lower", [20,21], 2, 3, 4, 2, uv_dir="right")
+
+
+        :param "upper"/"lower"/"upper_specific"/"lower_specific" section: Look vertical_pattern documentation.
+        :param int regions: Look vertical_pattern documentation.
+        :param int offset: Look vertical_pattern documentation.
+        :param int x_vmm: Choose a vmm of x planes for a center point of a horizontal pattern. Ranges from 0 to 7.
+        :param int x_ch_idx: Choose an index of a list of x plane channels with an input offset of a horizontal pattern. Generally ranges from 0 to 7, but not necessarily.
+        :param int input_uv_offset: An equivalent of offset for u and v planes instead of x planes.
+        :param "none"/"left"/"right"/optional uv_dir: Section.
+        :param 32/int/optional bc_gap: Look vertical_pattern documentation.
+        :param 0/int/optional bc_gap_region: Look vertical_pattern documentation.
+        :param 0/int/optional bc_gap_pl: Look vertical_pattern documentation.
+        :param "second"/str/optional second_dir_name: Look vertical_pattern documentation.
+        '''
         def make_hor():
             uv_offset= input_uv_offset
-            if "diagonal" in region:
+            if "diagonal" in section:
                 if input_uv_offset == 0 or (uv_dir != "left" and uv_dir != "right"):
                     exit()
                 if uv_dir == "right":
                     uv_offset = -1 * input_uv_offset
 
-            if "lower" in region and x_offset in [0, 1, 2, 3]:  # e.g. offset = 2
+            if "lower" in section and offset in [0, 1, 2, 3]:  # e.g. offset = 2
                 pass
-            elif "upper" in region and x_offset in [4, 5, 6, 7]:  # e.g. offset = 4
+            elif "upper" in section and offset in [4, 5, 6, 7]:  # e.g. offset = 4
                 pass
             else:
-                print("wrong region")
+                print("wrong section")
                 exit()
 
             interval = 8
-            channels = [x_offset + interval * i for i in range(8)] # interval = 8
+            channels = [offset + interval * i for i in range(8)] # interval = 8
             if x_vmm in [i for i in range(8)]:
                 x_ch = x_vmm * 64 + channels[x_ch_idx]
             else:
@@ -338,23 +424,23 @@ class GbtPacketMaker:
             return x_ch, u_ch_ls, v_ch_ls
 
         x_ch, u_ch_ls, v_ch_ls = make_hor()
-        dir_name = "hor_%s_ch%s_pair%s_%s_bc_gap_%s_bc_gap_pl_%s" % (region, x_ch, pairs, uv_dir, bc_start, bc_gap_pl)  # CHANGE THE DIR NAME
+
+        dir_name = "hor_%s_ch%s_pair%s_%s_bc_gap_%s_bc_gap_pl_%s" % (section, x_ch, regions, uv_dir, bc_gap, bc_gap_pl)  # CHANGE THE DIR NAME
         path = "GBT_packet_dir_%s/" % dir_name
-        second_dir_name = "second"
         path2 = "GBT_packet_dir_%s_%s/" % (dir_name, second_dir_name)
         k = 0
-        for i in range(len(pairs)):
-            bc = bc_start   + k
+        for i in range(len(regions)):
+            bc = bc_gap + k
             pl = [[], [], [], []]           # [x0, x1, u0, v0]
             for n in range(len(u_ch_ls)):
-                if pairs[i] in [20, 22, 24, 26, 28]:
+                if regions[i] in [20, 22, 24, 26, 28]:
                     ch = [x_ch % 64, x_ch % 64, u_ch_ls[n] % 64, v_ch_ls[n] % 64]
                     x0 = round((x_ch // 64) * .1, 1)
                     x1 = x0 + 1
                     u0 = round((u_ch_ls[n] // 64) * .1 + 2, 1)
                     v0 = round((v_ch_ls[n] // 64) * .1 + 3, 1)
                     pl = [x0, x1, u0, v0]
-                elif pairs[i] in [21, 23, 25, 27, 29]:
+                elif regions[i] in [21, 23, 25, 27, 29]:
                     ch = [u_ch_ls[n] % 64, v_ch_ls[n] % 64, x_ch % 64, x_ch % 64]
                     x0 = round((x_ch // 64) * .1 + 2, 1)
                     x1 = x0 + 1
@@ -364,45 +450,43 @@ class GbtPacketMaker:
 
                 if bc < 4096:
                     if bc_gap_pl == 0:
-                        GbtPacketMaker(pl,ch).make_gbt(bc, pairs[i], dir_name, "no")
+                        GbtPacketMaker(pl,ch).make_gbt(bc, regions[i], dir_name, "no")
                     #print(bc, [x_ch, u_ch_ls[n], v_ch_ls[n]], [pl[0],pl[1],pl[2],pl[3]], [x_ch % 64, x_ch % 64, u_ch_ls[n] % 64, v_ch_ls[n] % 64])
                     else:
                         for j in range(4):
-                            GbtPacketMaker([pl[j]],[ch[j]]).make_gbt(bc+j, pairs[i], dir_name, "no")
+                            GbtPacketMaker([pl[j]],[ch[j]]).make_gbt(bc+j, regions[i], dir_name, "no")
 
                 else:
                     temp_bc = bc - 4095             # add a separate directory for BC that are too large
                     if bc_gap_pl == 0:
-                        GbtPacketMaker(pl,ch).make_gbt(temp_bc, pairs[i], dir_name, "no", second_dir_name)
+                        GbtPacketMaker(pl,ch).make_gbt(temp_bc, regions[i], dir_name, "no", second_dir_name)
                     else:
                         for j in range(4):
-                            GbtPacketMaker([pl[j]],[ch[j]]).make_gbt(temp_bc+j, pairs[i], dir_name, "no"), second_dir_name
+                            GbtPacketMaker([pl[j]],[ch[j]]).make_gbt(temp_bc+j, regions[i], dir_name, "no"), second_dir_name
 
-                bc += bc_start
+                bc += bc_gap
 
             if i % 2 != 0:
                 k += bc_gap_region
 
-        if "specific" in region:
-            GbtPacketMaker.combine_gbt(path, "pair", len(pairs))
+        if "specific" in section:
+            GbtPacketMaker.combine_gbt(path, "pair", len(regions))
             print("Combined file created")
             if os.path.exists(os.path.dirname(path2)):
-                GbtPacketMaker.combine_gbt(path2, "pair", len(pairs))
+                GbtPacketMaker.combine_gbt(path2, "pair", len(regions))
                 print("Combined file 2 created")
         else:
-            GbtPacketMaker.combine_gbt(path, "all", len(pairs))  # CHANGE TO "pair" if wanting to combine in gbt pairs not all produced
+            GbtPacketMaker.combine_gbt(path, "all", len(regions))  # CHANGE TO "pair" if wanting to combine in gbt pairs not all produced
             print("Combined file created")
             if os.path.exists(os.path.dirname(path2)):
-                GbtPacketMaker.combine_gbt(path2, "all", len(pairs))  # combine the second file as well
+                GbtPacketMaker.combine_gbt(path2, "all", len(regions))  # combine the second file as well
                 print("Combined file 2 created")
 
 
 
 
 #GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]).make_gbt(32, 20, "test","yes")
-#GbtPacketMaker.vertical_pattern("upper", [20, 21], 4, 0, bc_start=96, bc_gap_pl=1)
+#GbtPacketMaker.vertical_pattern("upper", [20, 21], 4, 0, bc_gap=96, bc_gap_pl=1)
 #GbtPacketMaker.horizontal_pattern("upper", 4, 3, 7, [20, 21], 0,  bc_gap_pl=1)
-
-
 # # # BELOW ARE THE UPPER :
 # #[4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38, 39, 44, 45, 46, 47, 52, 53, 54, 55, 60, 61, 62, 63]

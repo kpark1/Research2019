@@ -1,3 +1,4 @@
+#!usr/bin/python3
 from collections import Counter
 import GbtPacketMaker
 
@@ -18,8 +19,17 @@ class GbtPacketChecker:
             ls.insert(0, 0)
         return [ls[i * n:(i + 1) * n] for i in range((len(ls) + n - 1) // n)]
 
-        # DO I NEED TO CHECK PARITY?
-    def extract(self):          # extract specific bits and make them into lists of #'s
+    @staticmethod
+    def track_pl_hit(input_pl_ls):  # KEEP TRACK OF ALL THE MULTIPLE PLANES
+        pl_ls = [int(pl) for pl in input_pl_ls]
+        count = Counter(pl_ls)
+        multiple_hit_pl = {}
+        for pl in list(set(pl_ls)):
+            if count[pl] > 1:
+                multiple_hit_pl[pl] = count[pl]
+        return multiple_hit_pl  # {pl: count, ...}
+
+    def extract(self):
         '''
         Extracts specific bits and make them into corresponding lists of Hit Map, ART data, and Region data.
         :return: Hit Map, ART data, Region Number
@@ -31,11 +41,10 @@ class GbtPacketChecker:
                 copy.append(line[0:8])
 
         f.close()
-        hitmap = copy[1][2:8] + copy[2][0:2]    #read second line 2:7 and third line 0:1 for hit map
+        hitmap = copy[1][2:8] + copy[2][0:2]     # read second line 2:7 and third line 0:1 for hit map
         artdata =copy[2][4:] + copy[3]           # third line 4:7 and fourth line 0:7 for art data
         region = copy[0][-2:]
         return hitmap, artdata, region
-
 
     def read_hitmap(self):
         '''
@@ -43,7 +52,7 @@ class GbtPacketChecker:
         '''
         hitmap, artdata, region = GbtPacketChecker.extract(self)
         hitmap_bin =[]
-        for each in hitmap:         # convert hexadecimal digits to integer to binary
+        for each in hitmap:                     # convert hexadecimal digits to integer to binary
             temp = str(bin(int(each, 16))[2:])
             if len(temp) == 4:
                 hitmap_bin.append(temp)
@@ -62,7 +71,7 @@ class GbtPacketChecker:
                     hitmap_read.append((3-i)+round(.1*(7-j), 1))  # flips the list
 
         hitmap_read.sort()
-        return hitmap_read        # return lists of hit vmm's and number of hits
+        return hitmap_read                                  # return lists of hit vmm's and number of hits
 
     def read_artdata(self):     # read and convert ART data
         '''
@@ -94,7 +103,6 @@ class GbtPacketChecker:
         '''
         Checks if the actual GBT packet follow the expected / intended hits pattern by comparing the produced list to the input list.
         Just like the output format of read_hitmap() and read_artdata(), the input format of check() should be [plane.vmm, ...][channel, ...]
-
         '''
         hitmap_read, artdata_read = GbtPacketChecker.read_hitmap(self), GbtPacketChecker.read_artdata(self)
         hitmap_intended, artdata_intended = zip(*sorted(zip(hitmap_intended, artdata_intended))) # in case not in order
@@ -128,17 +136,29 @@ class GbtPacketChecker:
         hitmap_read, artdata_read = GbtPacketChecker.read_hitmap(self), GbtPacketChecker.read_artdata(self)
         hitmap_intended, artdata_intended = zip(*sorted(zip(hitmap_intended, artdata_intended)))  # in case not in order
         hitmap_intended, artdata_intended = list(hitmap_intended), list(artdata_intended)
-        if GbtPacketChecker.check(self, hitmap_intended, artdata_intended):
-            print("Intended hits and hitmap and ART data read match up so no need for further investigation.")
+        print("Expected hit planes/vmm's = %s, Expected hit channels = %s, GBT Packet's hit planes/vmm's = %s, "
+              "GBT Packet's hit channels = %s" %(hitmap_intended, artdata_intended, hitmap_read, artdata_read))
+        if GbtPacketChecker.check(self, hitmap_intended, artdata_intended): # Checks if expected and result match up
+            print(hitmap_intended, artdata_intended, hitmap_read, artdata_read)
+            print("Intended hits and Hit Map and ART data read match up so no need for further investigation.")
             exit()
-        print(hitmap_intended, artdata_intended, hitmap_read, artdata_read)
+
         truncated_intended_ls = [round(hitmap_intended[i]- int(hitmap_intended[i]),1) for i in range(len(hitmap_intended))]
         truncated_read_ls = [round(hitmap_read[i]- int(hitmap_read[i]), 1) for i in range(len(hitmap_read))]
         if sorted(artdata_read) == sorted(artdata_intended) and sorted(truncated_read_ls) == sorted(truncated_intended_ls):
-            print("Possibility of planes with misconnected fibers")
+            print("Possibly misconnected fibers. Next Step is to see if there are multiple hits of the same planes.")
         else:
-            print("No possibility planes with misconnected fibers. Find the cause of the mismatch problem elsewhere.")
+            print("Not possible that fibers are misconnected although Hit Map and ART data read don't match up with intended hits. Find the cause of the mismatch problem elsewhere.")
             exit()
+
+        if len(GbtPacketChecker.track_pl_hit(hitmap_read)) > 0:
+            multiple_hit_pl = list(GbtPacketChecker.track_pl_hit(hitmap_intended).keys())
+            print("There are multiple hits on this/these planes :plane %s" % multiple_hit_pl)
+            for each in not_matched:
+                if int(hitmap_intended[each]) in multiple_hit_pl:
+                    print(
+                        "Among the possible candidates, there is/are ones with multiple hits on planes which need to be checked.")
+                    print(int(hitmap_intended[each]), multiple_hit_pl)
 
         match = []
         not_matched = []
@@ -146,25 +166,7 @@ class GbtPacketChecker:
             if [hitmap_intended[i], artdata_intended[i]] == [hitmap_read[i], artdata_read[i]]:   match.append(i)
             else:   not_matched.append(i)
 
-        #KEEP TRACK OF ALL THE MULTIPLE PLANES
-        def track_pl_hit(input_pl_ls):
-            pl_ls = [int(pl) for pl in input_pl_ls]
-            count = Counter(pl_ls)
-            multiple_hit_pl = {}
-            for pl in list(set(pl_ls)):
-                if count[pl] > 1:
-                    multiple_hit_pl[pl]=count[pl]
-            return multiple_hit_pl     #{pl: count, ...}
-
-        if len(track_pl_hit(hitmap_read)) > 0:
-            multiple_hit_pl = list(track_pl_hit(hitmap_intended).keys())
-            print("There are multiple hits on this/these planes :plane %s" % multiple_hit_pl)
-            for each in not_matched:
-                if int(hitmap_intended[each]) in multiple_hit_pl:
-                    print("Among the possible candidates, there is/are ones with multiple hits on planes which need to be checked.")
-                    print(int(hitmap_intended[each]), multiple_hit_pl)
-
-        if not_matched and len(not_matched) == 2:
+        if len(not_matched) == 2:
             if int(region) % 2 == 0:
                 pl_ls = ['x0', 'x1', 'u0', 'v0']
             else:
@@ -174,8 +176,9 @@ class GbtPacketChecker:
             print("More than two planes that are possible candidates of misconnected fibers.")
 
 
+
 #GbtPacketMaker.GbtPacketMaker([0.0, 1.0, 2.0, 3.0],[1,2,1,2,13]).make_gbt(32, 20, "test","yes")
-#test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
+test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
 # test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])
-# test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10]
+test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10]
 #test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])  # third and fourth fiber swapped
