@@ -47,22 +47,16 @@
 <dd><p>This is a class to make histograms from reading simulated GBT files.</p>
 <dl class="method">
 <dt id="HistogramMaker.HistogramMaker.chunky">
-<em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.chunky" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.chunky" title="Permalink to this definition">¶</a></dt>
 <dd><p>Divides a list into a list containing a lists of n number of elements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ls</strong> (<em>list</em>) – a list to be divided</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – a number of elements</p></li>
+<li><p><strong>input</strong> (<em>list/str</em>) – a list/string to be divided</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – lengths of lists within an output list / number of letters within an output list</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="HistogramMaker.HistogramMaker.hex_to_int">
-<em class="property">static </em><code class="sig-name descname">hex_to_int</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.hex_to_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.hex_to_int" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a list of hexadecimal strings to integers.</p>
 </dd></dl>
 
 <dl class="method">
@@ -72,32 +66,41 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="HistogramMaker.HistogramMaker.lines_to_lists">
-<code class="sig-name descname">lines_to_lists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.lines_to_lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.lines_to_lists" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extracts slope information from a GBT file after checking if there are headers.</p>
+<dt id="HistogramMaker.HistogramMaker.extract">
+<code class="sig-name descname">extract</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of elements which are each lines of simulated data. e.g. [[‘A3FF’, ‘0027’, ‘0004’, ‘0004’, …],[‘A3DE’,…],…]</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HistogramMaker.HistogramMaker.slope_each_pl">
-<code class="sig-name descname">slope_each_pl</code><span class="sig-paren">(</span><em class="sig-param">err_msg='eg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.slope_each_pl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.slope_each_pl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assigns slope data for each of the eight planes</p>
+<dt id="HistogramMaker.HistogramMaker.select">
+<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">idx_info=[2, 3, 4, 5, 6, 7, 8, 9]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns specific information with user input’s idx_info of each line of simulated data.
+Extracts integer slope information in 2 bits hexadecimal strings from a GBT file after checking if there are headers For all plane channel information, .
+:param [2,3,4,5,6,7,8,9]/list/optional idx_info: indices of information when lines of simulated data are divided into separate 2-bits e.g. v0 plane channel/strip information is idx_info=[2]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HistogramMaker.HistogramMaker.categorize">
+<code class="sig-name descname">categorize</code><span class="sig-paren">(</span><em class="sig-param">idx_info=[2, 3, 4, 5, 6, 7, 8, 9], err_msg='g'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.categorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.categorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Organizes selected lists of information corresponding to a user input variables (indicated by indices) and makes a dictionary with keys named after variables and all of their values.
+If err_msg is not default value ‘g’, then, it only selects and organizes the values with corresponding error message digit</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="HistogramMaker.HistogramMaker.plot_histogram">
-<code class="sig-name descname">plot_histogram</code><span class="sig-paren">(</span><em class="sig-param">second_file='none'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.plot_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.plot_histogram" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_histogram</code><span class="sig-paren">(</span><em class="sig-param">idx_info=[2, 3, 4, 5, 6, 7, 8, 9], second_file='none'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.plot_histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.plot_histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots hit slope histograms for all eight planes.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting a histogram of one example simulated GBT file.</span>
-<span class="n">HistogramMaker</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot_histogram</span><span class="p">()</span>
+<span class="n">HistogramMaker</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot_slope_histogram</span><span class="p">()</span>
 <span class="c1"># Plotting one histogram of combined data from two example simulated GBT files.</span>
-<span class="n">HistogramMaker</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot_histogram</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;</span><span class="p">)</span>
+<span class="n">HistogramMaker</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot_slope_histogram</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="HistogramMaker.HistogramMaker.plot_histogram_error">
-<code class="sig-name descname">plot_histogram_error</code><span class="sig-paren">(</span><em class="sig-param">second_file='none'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.plot_histogram_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.plot_histogram_error" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_histogram_error</code><span class="sig-paren">(</span><em class="sig-param">idx_info=[2, 3, 4, 5, 6, 7, 8, 9], second_file='none'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.plot_histogram_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.plot_histogram_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots hit slope histograms for all eight planes.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plotting a histogram of one example simulated GBT file with error messages.</span>
 <span class="n">HistogramMaker</span><span class="p">(</span><span class="s2">&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot_histogram_error</span><span class="p">()</span>

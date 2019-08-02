@@ -3,45 +3,30 @@
 #from matplotlib.pylab import *
 
 
-
 class HistogramMaker:
     '''
     This is a class to make histograms from reading simulated GBT files.
     '''
+
     def __init__(self, file):
         self.file = "./"+str(file)
 
     @staticmethod
-    def chunky(ls, n):
+    def chunky(input, n):
         '''
         Divides a list into a list containing a lists of n number of elements.
 
-        :param list ls: a list to be divided
-        :param int n: a number of elements
+        :param list/str input: a list/string to be divided
+        :param int n: lengths of lists within an output list / number of letters within an output list
         '''
-        while len(ls) % n != 0:
-            ls.insert(0, 0)
-        return [ls[i * n:(i + 1) * n] for i in range((len(ls) + n - 1) // n)]
-
-    @staticmethod
-    def hex_to_int(ls):
-        '''
-        Converts a list of hexadecimal strings to integers.
-        '''
-        new_ls = []
-
-        for i in range(len(ls)):
-            new_ls.append([])
-            for j in range(len(ls[i])):
-                temp_slp = ''
-                for k in range(len(ls[i][j])):
-                    slope_str = temp_slp + ls[i][j][k]
-                    temp_slp = slope_str
-
-                slope = int(temp_slp, 16)
-                new_ls[i].append(slope)
-
-        return new_ls
+        if isinstance(input, list):
+            while len(input) % n != 0:
+                input.insert(0, 0)
+            output = [input[i * n:(i + 1) * n] for i in range((len(input) + n - 1) // n)]
+        elif isinstance(input, str):
+            output = [input[i:i + n] for i in range(0, len(input), n)]
+        else:exit()
+        return output
 
     def check(self):
         '''
@@ -54,117 +39,136 @@ class HistogramMaker:
                 print(line[0:2])
                 sys.exit()
 
-    def lines_to_lists(self):
+    def extract(self):
         '''
-        Extracts slope information from a GBT file after checking if there are headers.
+        Returns a list of elements which are each lines of simulated data. e.g. [['A3FF', '0027', '0004', '0004', ...],['A3DE',...],...]
         '''
         HistogramMaker.check(self)
-        ls = []
-        ls_hit_slope = []
-        err_msg_ls = []
+        line_ls = []
         readfile = open(self.file, 'r')
         for line in readfile.readlines():
-            for slope in line[12:59]:
-                if not slope == ' ':        # get rid of blanks & keep the space btwn the parentheses
-                    converted_slope = str(slope.strip())
-                    ls.append(converted_slope)
-            ls_hit_slope.append(ls)
-            ls = []
+            line_condensed = ""
+            for letter in line:
+                if letter != " " and letter !="\n":
+                    line_condensed += letter
 
-            err_msg_ls.append(line[6:8])
+            line_chunks = HistogramMaker.chunky(line_condensed,4)
+            line_ls.append(line_chunks)
 
-        ls_hit_slope = [x for x in ls_hit_slope if x != []]     # get rid of empty lists
-        new_ls = []
-        for i in range(len(ls_hit_slope)):  # convert into lists of four digits
-            digit_list = HistogramMaker.chunky(ls_hit_slope[i], 4)
-            new_ls.append(digit_list)
+        readfile.close()
+        return line_ls
 
-        slope_ls = HistogramMaker.hex_to_int(new_ls)
-        return slope_ls, err_msg_ls
-
-    def slope_each_pl(self, err_msg='eg'):
+    def select(self, idx_info=[2,3,4,5,6,7,8,9]):
         '''
-        Assigns slope data for each of the eight planes
+        Returns specific information with user input's idx_info of each line of simulated data.
+        Extracts integer slope information in 2 bits hexadecimal strings from a GBT file after checking if there are headers For all plane channel information, .
+        :param [2,3,4,5,6,7,8,9]/list/optional idx_info: indices of information when lines of simulated data are divided into separate 2-bits e.g. v0 plane channel/strip information is idx_info=[2]
         '''
-        v0, v1, u0, u1, x0, x1, x2, x3 = [], [], [], [], [], [], [], []
-        pl = [v0, v1, u0, u1, x0, x1, x2, x3]
-        slope_ls, err_msg_ls = HistogramMaker.lines_to_lists(self)
-        if err_msg == 'eg':skip = True # default is 'eg' which then looks at every line with all types of error messages
-        else: skip = False
+        selected_ls = []
+        err_msg_ls = []
+        info = HistogramMaker.extract(self)
+        for i in range(len(info)):
+            selected = []
+            for idx in idx_info:
+                if idx in [2,3,4,5,6,7,8,9]:
+                    selected.append(int(info[i][idx], 16))
+                else:
+                    selected.append(info[i][idx])
 
-        for i in range(len(slope_ls)):
-            for j in range(len(slope_ls[i])):
-                if slope_ls[i][j] != 0:
+            selected_ls.append(selected)
+            err_msg_ls.append(info[i][1][0])
+        return selected_ls, err_msg_ls
+
+    def categorize(self, idx_info=[2,3,4,5,6,7,8,9], err_msg='g'):
+        '''
+        Organizes selected lists of information corresponding to a user input variables (indicated by indices) and makes a dictionary with keys named after variables and all of their values.
+        If err_msg is not default value 'g', then, it only selects and organizes the values with corresponding error message digit
+        '''
+        if err_msg == 'g':skip = True  # default is 'eg' which then looks at every line with all types of error messages
+        else:skip = False
+        selected_ls, err_msg_ls = HistogramMaker.select(self, idx_info)
+        variables = ['Header', 'Error message and BCID', 'v0', 'v1', 'u0', 'u1', 'x0', 'x1', 'x2', 'x3',
+                     'Fitting info #1', 'Fitting info #2', 'Fitting info #3', 'Fitting info #4',
+                     'Fitting info #5', 'Fitting info #6', 'Fitting info #7', 'Fitting info #8']
+        var_sel = [variables[i] for i in idx_info]
+        var_dict = {}
+        for i in range(len(var_sel)):
+            var_dict[var_sel[i]] = []
+
+        for i in range(len(selected_ls)):
+            for j in range(len(selected_ls[i])):
+                if selected_ls[i][j] != 0:
                     if skip:
-                        pl[j].append(slope_ls[i][j])
+                        var_dict[var_sel[j]].append(selected_ls[i][j])
                     elif not skip and err_msg_ls[i] == err_msg:
-                        pl[j].append(slope_ls[i][j])
+                        var_dict[var_sel[j]].append(selected_ls[i][j])
 
-        v0, v1, u0, u1 = sorted(v0), sorted(v1), sorted(u0), sorted(u1)
-        x0, x1, x2, x3 = sorted(x0), sorted(x1), sorted(x1), sorted(x3)
+        for each in var_dict:
+            var_dict[each].sort()
 
-        return v0, v1, u0, u1, x0, x1, x2, x3
+        return var_dict, err_msg_ls, err_msg
 
-    def plot_histogram(self, second_file="none"):
+    def plot_histogram(self, idx_info=[2,3,4,5,6,7,8,9], second_file="none"):
         '''
         Plots hit slope histograms for all eight planes.::
-            
-        
-            # Plotting a histogram of one example simulated GBT file.
-            HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_histogram()
-            # Plotting one histogram of combined data from two example simulated GBT files.
-            HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_histogram("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt")
-        
 
-            '''
-        result = HistogramMaker.slope_each_pl(self)
-        v0, v1, u0, u1, x0, x1, x2, x3 = result[0], result[1], result[2], result[3], result[4], result[5], \
-                                         result[6], result[7]
+
+            # Plotting a histogram of one example simulated GBT file.
+            HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_slope_histogram()
+            # Plotting one histogram of combined data from two example simulated GBT files.
+            HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_slope_histogram("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt")
+
+
+        '''
+        var_dict, err_msg_ls, _ = HistogramMaker.categorize(self, idx_info)
+        var_sel = [each for each in var_dict]
+        err_sorted = sorted(list(set(err_msg_ls)))
 
         if second_file.lower() != "none":  # In case there are two files to be combined for one histogram
-            result2 = HistogramMaker(second_file).slope_each_pl()
             second_title = " and " + [x for x in second_file.split('/')][-1][:-4] + " combined"
-            for i in range(len(result)):
-                result[i].extend(result2[i])
+            for each in var_sel:
+                var_dict_2 = HistogramMaker(second_file).categorize(idx_info)
+                var_dict[each].extend(var_dict_2[each])
+
         else:
             second_title = ""
 
-        pl_names = ['v0', 'v1', 'u0', 'u1', 'x0', 'x1', 'x2', 'x3']
-        fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8) = plt.subplots(size(pl_names), 1, figsize=(15, 7.5))
+        fig, axs = plt.subplots(len(idx_info), 1, figsize=(15, 7.5)) #figsize=(15,1 *len(idx_info)))
         plt.subplots_adjust(hspace=1.8)
         title = [x for x in self.file.split('/')][-1][:-4]
-        fig.suptitle("Slope Hits Histograms: %s%s" % (title, second_title))
-        pl = [v0, v1, u0, u1, x0, x1, x2, x3]
-        axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
-        k = 0
-        data_ls = []
+        fig.suptitle("%s Histograms" % var_sel)
+        data_ls = {}
+        for i in range(len(var_dict)):
+            data_ls[var_sel[i]] = {}
+            print(var_dict[var_sel[i]])
+            if var_sel[i] in ['v0','v1','u0','u1','x0','x1','x2','x3']:
+                print(int(max(var_dict[var_sel[i]])))
+                (n, bins, patches) = axs[i].hist(var_dict[var_sel[i]], align="left", bins=range(int(max(var_dict[var_sel[i]]))+10),
+                                                 histtype='step')
+                prev = 0
+                for yval, xval in zip(n, bins):     # Informs the user of the y values of x+1 when the y value of x+1 is different than y of x
+                    if yval != 0 and yval != prev:
+                        prev = yval
+                        if isinstance(yval, float):
+                            yval = int(yval)
+                        axs[i].annotate(yval, xy=(xval,0))
+
+            else:
+                (n, bins, patches) = axs[i].hist(var_dict[var_sel[i]], align="left", histtype='step') # histtype=step speeds up plotting process
+
+            data_ls[var_sel[i]] = {"n": n, "bins": bins}
+            axs[i].set_xlabel(var_sel[i], x=1, fontsize=12)  # axs[i].set_title("%s" % var_sel[k], fontsize=10)
+
+        axs[0].set_ylabel('Hits', x=1, fontsize=12)
         for i in range(len(axs)):
-            (n, bins, patches) = axs[i].hist(pl[i], align="left", bins=range(int(max(pl[i]) + 10)),
-                                             histtype='step')  # histtype=step speeds up plotting process
-            axs[i].set_title("%s Plane" % pl_names[k], fontsize=10)
-            prev = 0
-            for yval, xval in zip(n, bins):
-                if yval != 0 and yval != prev:
-                    prev = yval
-                    axs[i].annotate(int(yval), xy=(xval, 0))
-
-            k = k + 1
-            data_ls.append([i, n, bins, patches])
-
-        ls = []
-        for i in range(len(data_ls)):
-            n = data_ls[i][1]
-            bins = data_ls[i][2]
-            ls.append([])
-            for j in range(len(n)):
-                if n[j] != 0:
-                    ls[i].append('  channel=%s, num_hits=%s  ' % (bins[j], int(n[j])))
-        print("file = %s \n v0 = %s \n v1 = %s \n x0 = %s \n\n" % (self.file, ls[0], ls[1], ls[4]))
-        ax8.set_xlabel('Slope Value', x=1, fontsize=12)
-        ax5.set_ylabel('Slope Hits', fontsize=12)
+            print("------------------ plane = %s ------------------" % (var_sel[i]))
+            for n_each, bins_each in zip(data_ls[var_sel[i]]["n"], data_ls[var_sel[i]]["bins"]):
+                if int(n_each) != 0:
+                    print("(channel= %s, num_hits = %s)" % (bins_each, int(n_each)), end='  ')
+            print("\n")
         plt.show()
 
-    def plot_histogram_error(self, second_file="none"):
+    def plot_histogram_error(self, idx_info=[2,3,4,5,6,7,8,9], second_file="none"):
         '''
         Plots hit slope histograms for all eight planes.::
 
@@ -176,69 +180,70 @@ class HistogramMaker:
 
 
         '''
-        _,  err_msg_ls = HistogramMaker.lines_to_lists(self)
-        data = {}
-        data2 = {}
-        dt = {}
-        pl = ['v0', 'v1', 'u0', 'u1', 'x0', 'x1', 'x2', 'x3']
-        for each in pl:
-            dt[each] = {}
+        all_dict = {}
+        all_dict_2 = {}
+        var_dict, err_msg_ls, _ = HistogramMaker.categorize(self, idx_info)
+        var_sel = [each for each in var_dict]
+        var_dict = {}
+        var_dict_2 = {}
         err_sorted = sorted(list(set(err_msg_ls)))
         for err_msg in err_sorted:
-            data[err_msg] = HistogramMaker.slope_each_pl(self, err_msg)
-            dt["v0"][err_msg], dt["v1"][err_msg], dt["u0"][err_msg], dt["u1"][err_msg], dt["x0"][err_msg],\
-            dt["x1"][err_msg], dt["x2"][err_msg], dt["x3"][err_msg] = data[err_msg][0],  data[err_msg][1], \
-            data[err_msg][2], data[err_msg][3], data[err_msg][4], data[err_msg][5], data[err_msg][6], data[err_msg][7]
+            var_dict, _, _ = HistogramMaker.categorize(self, idx_info, err_msg)
+            all_dict[err_msg] = var_dict
 
         if second_file.lower() != "none":  # In case there are two files to be combined for one histogram
             second_title = " and " + [x for x in second_file.split('/')][-1][:-4] + " combined"
-            for err_msg in err_sorted:
-                data2[err_msg] = HistogramMaker(second_file).slope_each_pl(err_msg)
-                for i in range(8):
-                    dt[pl[i]][err_msg].extend(data2[err_msg][i])
+            var_dict_2, err_msg_ls_2, _ = HistogramMaker(second_file).categorize(idx_info)
+            err_sorted_2 = sorted(list(set(err_msg_ls)))
+            for err_msg in err_sorted_2:
+                var_dict_2, _, _ = HistogramMaker(second_file).categorize(idx_info, err_msg)
+                all_dict_2[err_msg] = var_dict_2
+                for each in var_sel:
+                    print(all_dict[err_msg][each])
+                    all_dict[err_msg][each].extend(all_dict_2[err_msg][each])
         else:
-            second_title= ""
+            second_title = ""
 
-
-        fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8) = plt.subplots(size(pl), 1, figsize=(15, 7.5))
+        fig, axs = plt.subplots(len(idx_info), 1, figsize=(15, 7.5)) #figsize=(15,1 *len(idx_info)))
         plt.subplots_adjust(hspace=1.8)
         title = [x for x in self.file.split('/')][-1][:-4]
-        fig.suptitle("Slope Hits Histograms: %s%s" % (title, second_title))
-        axs = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
-        k = 0
+        fig.suptitle("%s Histograms" % var_sel)
         data_ls = {}
-        for i in range(len(axs)):
-            data_ls[pl[i]] = {}
+        for i in range(len(var_dict)):
+            data_ls[var_sel[i]] = {}
             for err_msg in err_sorted:
-                data_ls[pl[i]][err_msg] = {}
-                (n, bins, patches) = axs[i].hist(dt[pl[i]][err_msg], align="left", bins=range(int(max(dt[pl[0]][err_msg]) + 10)),
-                                             histtype='step', stacked=True, fill=False, label=err_msg)  # histtype=step speeds up plotting process
-                data_ls[pl[i]][err_msg] = {"n": n, "bins": bins}
+                if var_sel[i] in ['v0','v1','u0','u1','x0','x1','x2','x3']:
+                    (n, bins, patches) = axs[i].hist(all_dict[err_msg][var_sel[i]], align="left", bins=range(int(max(all_dict[err_msg][var_sel[i]])) + 10),
+                                                     histtype='step', stacked=True, fill=False, label=err_msg)
+                    prev = 0
+                    for yval, xval in zip(n, bins):     # Informs the user of the y values of x+1 when the y value of x+1 is different than y of x
+                        if yval != 0 and yval != prev:
+                            prev = yval
+                            if isinstance(yval, float):
+                                yval = int(yval)
+                            axs[i].annotate(yval, xy=(xval,0))
 
-            prev = 0
-            for yval, xval in zip(n, bins):
-                if yval != 0 and yval != prev:
-                    prev = yval
-                    axs[i].annotate(int(yval), xy=(xval, 0))
+                else:
+                    (n, bins, patches) = axs[i].hist(all_dict[err_msg][var_sel[i]], align="left", histtype='step') # histtype=step speeds up plotting process
 
-            axs[i].set_title("%s Plane" % pl[k], fontsize=10)
-            k = k + 1
+                data_ls[var_sel[i]][err_msg] = {"n": n, "bins": bins}
 
+            axs[i].set_xlabel(var_sel[i], x=1, fontsize=12)  # axs[i].set_title("%s" % var_sel[k], fontsize=10)
+
+        axs[0].set_ylabel('Hits', x=1, fontsize=12)
         axs[0].legend(loc='best', bbox_to_anchor=(0.6, 0., 0.5, 0.5))
         print("file = %s\n" % self.file)
         print(err_sorted)
         for i in range(len(axs)):
             for err_msg in err_sorted:
-                print("------------------ plane = %s ||| error message = %s ------------------" % (pl[i], err_msg))
-                for n_each, bins_each in zip(data_ls[pl[i]][err_msg]["n"], data_ls[pl[i]][err_msg]["bins"]):
+                print("------------------ plane = %s ||| error message = %s ------------------" % (var_sel[i], err_msg))
+                for n_each, bins_each in zip(data_ls[var_sel[i]][err_msg]["n"], data_ls[var_sel[i]][err_msg]["bins"]):
                     if int(n_each) != 0:
-                        print("(channel= %s, num_hits = %s)" %(bins_each, int(n_each)), end='  ')
+                        print("(channel= %s, num_hits = %s)" % (bins_each, int(n_each)), end='  ')
                 print("\n")
-
-        ax8.set_xlabel('Slope Value', x=1, fontsize=12)
-        ax5.set_ylabel('Slope Hits', fontsize=12)
         plt.show()
 
 
-#HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first_check.txt").plot_histogram_error()
-#HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first_check.txt").plot_histogram_error("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second_check.txt")
+#HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first_check.txt").plot_histogram_error([2,3,4,5,6,7], second_file="copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second_check.txt")
+
+#b=HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap_pl_1.txt").plot_histogram([2,3,4,5,6,7])

@@ -98,8 +98,8 @@ class GbtPacketMaker:
             file_ls = [dir_name + file for file in file_ls]                       # add directory path
             with open('combined_%s' % dir_name[:-1], 'w') as out_file:
                 if bc_delay != 0:
-                    delay_lines = GbtPacketMaker([0.0],[0]).make_gbt(bc_delay, 20, "", second_dir="none", make=False)
-                    print(delay_lines)
+                    delay_lines = GbtPacketMaker([0.0], [0]).make_gbt(bc_delay, 20, "", second_dir="none", make=False)
+                    delay_lines += GbtPacketMaker([0.0], [0]).make_gbt(bc_delay, 21, "", second_dir="none", make=False)
                     out_file.write(delay_lines)
 
                 for file in file_ls:
@@ -130,8 +130,8 @@ class GbtPacketMaker:
                     print(file_ls)
                     with open(os.path.join(directory, file_ls[0].split("/")[1]), 'w') as out_file:
                         if bc_delay != 0:
-                            delay_lines = GbtPacketMaker([0.0],[0]).make_gbt(bc_delay, 20, "", second_dir="none", make=False)
-                            print(delay_lines)
+                            delay_lines = GbtPacketMaker([0.0], [0]).make_gbt(bc_delay, 20, "", second_dir="none", make=False) + "\n"
+                            delay_lines += GbtPacketMaker([0.0], [0]).make_gbt(bc_delay, 21, "", second_dir="none", make=False)
                             out_file.write(delay_lines)
 
                         for file in file_ls:
@@ -517,7 +517,7 @@ class GbtPacketMaker:
 
 
 #print(GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]).make_gbt(32, 20, "test","yes"))
-GbtPacketMaker.vertical_pattern("upper", [20, 21], 4, bc_delay=800, bc_gap_pl=1)
+#GbtPacketMaker.vertical_pattern("upper", [20, 21, 22, 23, 24, 25, 26, 27, 28, 29], 4, bc_delay=800, bc_gap_pl=1)
 #GbtPacketMaker.horizontal_pattern("upper", 4, 3, 7, [20, 21], 0,  bc_gap_pl=1)
 # # # BELOW ARE THE UPPER :
 # #[4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31, 36, 37, 38, 39, 44, 45, 46, 47, 52, 53, 54, 55, 60, 61, 62, 63]
