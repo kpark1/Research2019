@@ -37,15 +37,21 @@
           <div class="body" role="main">
             
   <h1>Source code for HistogramMaker</h1><div class="highlight"><pre>
-<span></span><span class="ch">#!/usr/local/bin/python3</span>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">HistogramMaker is a class that reads simulated GBT files (after creating GBT files using GbtPacketMaker class, feed the combined/individual packet files into the simulator).</span>
+<span class="sd">HistogramMaker can generate two different types of histograms: one without an error message, which takes less amount of time to execute and another with error messages indicated by the colors of the bins. Both types of histograms require an input of a list with indices that tells the class which byte should be considered for making histograms.</span>
+
+<span class="sd">For instance, the default input is [2,3,4,5,6,7,8,9] which are translated into collecting data for all planes or v0, v1, u0, u1, x0, x1, x2, x3 planes.   </span>
+<span class="sd">Indices range from 0 to 17 as the number of bytes for each line of the simulated GBT packet is 18 bytes long (this translates into header, error message and BCID, v0, v1, u0, u1, x0, x1, x2, x3, fitting info #1, fitting info #2, fitting info #3, fitting info #4, fitting info #5, fitting info #6, fitting info #7, fitting info #8</span>
+
+<span class="sd">When creating an instance of the class, make sure the input datafile (simulated GBT data) is either within the same directory, or include the path to the file. e.g.HistogramMaker(&quot;&lt;directory&gt;/&lt;filename&gt;&quot;)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="c1">#!/usr/local/bin/python3</span>
 <span class="c1"># #UNCOMMENT BELOW(IMPORT) BEFORE EXECUTING THE CODE</span>
 <span class="c1">#from matplotlib.pylab import *</span>
 
 
 <div class="viewcode-block" id="HistogramMaker"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker">[docs]</a><span class="k">class</span> <span class="nc">HistogramMaker</span><span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This is a class to make histograms from reading simulated GBT files.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>

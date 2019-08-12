@@ -1,0 +1,13 @@
+Introduction
+==============================
+
+GbtPacketMaker, GbtPacketChecker, and HistogramMaker are python classes that generates GBT (Gigabyte Transmission) packets, checks if the packets are created correctly, and makes histograms to observe how the Trigger Processor simulation reacts to given GBT packets hit data.
+ 
+GbtPacketMaker, GbtPacketChecker, HistogramMaker require installing several modules listed in requirements.txt.
+To install these modules::
+   pip install -r requirements.txt
+
+Or manually install modules by ::
+   pip install <module>
+
+Additionally, GbtPacketChecker and HistogramMaker require GbtPacketMaker class to exist in the same directory to import several functions.

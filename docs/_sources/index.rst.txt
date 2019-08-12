@@ -1,10 +1,13 @@
 
 Welcome to Research 2019's documentation!
-=========================================
+==========================================   
 
+Contents:
+ 
 .. toctree::
    :maxdepth: 2
    
+   intro   
    GbtPacketMaker
    GbtPacketChecker
    HistogramMaker

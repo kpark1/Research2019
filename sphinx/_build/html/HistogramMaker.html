@@ -41,11 +41,15 @@
             
   <div class="section" id="module-HistogramMaker">
 <span id="histogrammaker"></span><h1>HistogramMaker<a class="headerlink" href="#module-HistogramMaker" title="Permalink to this headline">¶</a></h1>
+<p>HistogramMaker is a class that reads simulated GBT files (after creating GBT files using GbtPacketMaker class, feed the combined/individual packet files into the simulator).
+HistogramMaker can generate two different types of histograms: one without an error message, which takes less amount of time to execute and another with error messages indicated by the colors of the bins. Both types of histograms require an input of a list with indices that tells the class which byte should be considered for making histograms.</p>
+<p>For instance, the default input is [2,3,4,5,6,7,8,9] which are translated into collecting data for all planes or v0, v1, u0, u1, x0, x1, x2, x3 planes.   
+Indices range from 0 to 17 as the number of bytes for each line of the simulated GBT packet is 18 bytes long (this translates into header, error message and BCID, v0, v1, u0, u1, x0, x1, x2, x3, fitting info #1, fitting info #2, fitting info #3, fitting info #4, fitting info #5, fitting info #6, fitting info #7, fitting info #8</p>
+<p>When creating an instance of the class, make sure the input datafile (simulated GBT data) is either within the same directory, or include the path to the file. e.g.HistogramMaker(“&lt;directory&gt;/&lt;filename&gt;”)</p>
 <dl class="class">
 <dt id="HistogramMaker.HistogramMaker">
 <em class="property">class </em><code class="sig-prename descclassname">HistogramMaker.</code><code class="sig-name descname">HistogramMaker</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a class to make histograms from reading simulated GBT files.</p>
-<dl class="method">
+<dd><dl class="method">
 <dt id="HistogramMaker.HistogramMaker.chunky">
 <em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/HistogramMaker.html#HistogramMaker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HistogramMaker.HistogramMaker.chunky" title="Permalink to this definition">¶</a></dt>
 <dd><p>Divides a list into a list containing a lists of n number of elements.</p>

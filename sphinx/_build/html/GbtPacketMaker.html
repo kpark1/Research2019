@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="GbtPacketChecker" href="GbtPacketChecker.html" />
-    <link rel="prev" title="Welcome to Research 2019’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Introduction" href="intro.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,7 +32,7 @@
           <a href="GbtPacketChecker.html" title="GbtPacketChecker"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Research 2019’s documentation!"
+          <a href="intro.html" title="Introduction"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Research 2019 0.0.1 documentation</a> &#187;</li> 
       </ul>
@@ -45,6 +45,10 @@
             
   <div class="section" id="module-GbtPacketMaker">
 <span id="gbtpacketmaker"></span><h1>GbtPacketMaker<a class="headerlink" href="#module-GbtPacketMaker" title="Permalink to this headline">¶</a></h1>
+<p>GbtPacketMaker is a class that allows the user to make a GBT(Gigabyte Transmission) packet that corresponds to the user input.
+The format of the input is [plane.vmm,…],[channel,…]. 
+For instance, if the instance of the class is GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]), then GbtPacketMaker.make_gbt() would interpret as first plane’s first vmm’s 2nd channel, first plane’s 5th vmm’s 3rd channel, etc, to be hit and produce the corresponding GBT packet file.</p>
+<p>GbtPacketMaker also can produce two different patterns: vertical and horizontal. After producing GBT packet files of either of the patterns, the class can also combine files into one file or directory depending on user’s input.</p>
 <dl class="class">
 <dt id="GbtPacketMaker.GbtPacketMaker">
 <em class="property">class </em><code class="sig-prename descclassname">GbtPacketMaker.</code><code class="sig-name descname">GbtPacketMaker</code><span class="sig-paren">(</span><em class="sig-param">input_vmm_list</em>, <em class="sig-param">input_channel_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker" title="Permalink to this definition">¶</a></dt>
@@ -237,8 +241,8 @@ If file is successfully completed, it will print out “Combined file created”
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to Research 2019’s documentation!</a></p>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">Introduction</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="GbtPacketChecker.html"
                         title="next chapter">GbtPacketChecker</a></p>
@@ -276,7 +280,7 @@ If file is successfully completed, it will print out “Combined file created”
           <a href="GbtPacketChecker.html" title="GbtPacketChecker"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Research 2019’s documentation!"
+          <a href="intro.html" title="Introduction"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Research 2019 0.0.1 documentation</a> &#187;</li> 
       </ul>

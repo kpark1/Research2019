@@ -1,3 +1,6 @@
+'''
+GbtPacketChecker has two main functions. It can reads a GBT packet before its simulation to check whether the intended hits that the user feeds in as an input matches with the user's GBT packet data. It also can determine and return which plane, vmm, and channel are hit in a give GBT packet and compare with the intended hit data. 
+'''
 #!usr/bin/python3
 from collections import Counter
 import GbtPacketMaker
@@ -6,18 +9,6 @@ class GbtPacketChecker:
     def __init__(self, directory, input_gbt):
         self.directory = directory
         self.input_gbt = input_gbt
-
-    @staticmethod
-    def chunky(ls, n):
-        '''
-        Divides a list into a list containing a lists of n number of elements.
-
-        :param list ls: a list to be divided
-        :param int n: a number of elements
-        '''
-        while len(ls) % n != 0:
-            ls.insert(0, 0)
-        return [ls[i * n:(i + 1) * n] for i in range((len(ls) + n - 1) // n)]
 
     @staticmethod
     def track_pl_hit(input_pl_ls):  # KEEP TRACK OF ALL THE MULTIPLE PLANES
@@ -59,7 +50,7 @@ class GbtPacketChecker:
             else:
                 hitmap_bin.append(((4-len(temp))*"0"+temp))
 
-        hitmap_pl = GbtPacketChecker.chunky(hitmap_bin,2)   # consolidate into groups of two sets of four digits
+        hitmap_pl = GbtPacketMaker.chunky(hitmap_bin,2)   # consolidate into groups of two sets of four digits
         hitmap_ls = []
         for each in hitmap_pl:      # e.g. ['00000100', '00000100', '00000101', '00000100']
             hitmap_ls.append(''.join(map(str, each)))

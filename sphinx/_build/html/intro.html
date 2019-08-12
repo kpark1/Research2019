@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Welcome to Research 2019’s documentation! &#8212; Research 2019 0.0.1 documentation</title>
+    <title>Introduction &#8212; Research 2019 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -16,7 +16,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Introduction" href="intro.html" /> 
+    <link rel="next" title="GbtPacketMaker" href="GbtPacketMaker.html" />
+    <link rel="prev" title="Welcome to Research 2019’s documentation!" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,9 +29,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="GbtPacketMaker.html" title="GbtPacketMaker"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Research 2019 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="index.html" title="Welcome to Research 2019’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Research 2019 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -39,25 +43,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-research-2019-s-documentation">
-<h1>Welcome to Research 2019’s documentation!<a class="headerlink" href="#welcome-to-research-2019-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GbtPacketMaker.html">GbtPacketMaker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GbtPacketChecker.html">GbtPacketChecker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="HistogramMaker.html">HistogramMaker</a></li>
-</ul>
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>GbtPacketMaker, GbtPacketChecker, and HistogramMaker are python classes that generates GBT (Gigabyte Transmission) packets, checks if the packets are created correctly, and makes histograms to observe how the Trigger Processor simulation reacts to given GBT packets hit data.</p>
+<p>GbtPacketMaker, GbtPacketChecker, HistogramMaker require installing several modules listed in requirements.txt.
+To install these modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
 </div>
+<p>Or manually install modules by</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</pre></div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+<p>Additionally, GbtPacketChecker and HistogramMaker require GbtPacketMaker class to exist in the same directory to import several functions.</p>
 </div>
 
 
@@ -66,19 +64,16 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to Research 2019’s documentation!</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
-
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Research 2019’s documentation!</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="next chapter">Introduction</a></p>
+  <p class="topless"><a href="GbtPacketMaker.html"
+                        title="next chapter">GbtPacketMaker</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
+      <li><a href="_sources/intro.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -106,9 +101,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="GbtPacketMaker.html" title="GbtPacketMaker"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Research 2019 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="index.html" title="Welcome to Research 2019’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Research 2019 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
