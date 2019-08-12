@@ -1,5 +1,5 @@
 '''
-GbtPacketChecker has two main functions. It can read a GBT packet before its simulation to check whether the intended hit data that the user feeds in as an input matches with the user's GBT packet data. GbtPacketChecker's second function includes determining and returning which plane, vmm, and channel are hit in a give GBT packet and comparing them  with the intended hit data. 
+GbtPacketChecker has two main functions. It can read a GBT packet before its simulation to check whether the intended hit data, which the user feeds in as an input, matches with the user's GBT packet data. GbtPacketChecker's second function includes determining and returning which planes, vmms, and channels are hit in a give GBT packet and comparing them  with the intended hit data. 
 '''
 #!usr/bin/python3
 from collections import Counter

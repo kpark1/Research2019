@@ -3,7 +3,7 @@ GbtPacketMaker is a class that allows the user to make a GBT(Gigabyte Transmissi
 The format of the input is [plane.vmm,...],[channel,...]. 
 For instance, if the instance of the class is GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]), then GbtPacketMaker.make_gbt() would interpret first plane's first vmm's 2nd channel, first plane's 5th vmm's 3rd channel, second plane's 6th vmm's 5th channel, etc, to be hit and produce the corresponding GBT packet file.
 
-GbtPacketMaker can also produce two different patterns: vertical and horizontal. After producing GBT packet files of either of the patterns, the class cancombine files into one file or directory depending on user's input.    
+GbtPacketMaker can also produce two different patterns: vertical and horizontal. After producing GBT packet files of either of the patterns, the class can combine files into one file or directory depending on user's input.    
 '''
 import os
 import errno
