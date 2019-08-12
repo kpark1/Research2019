@@ -43,8 +43,74 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="gbtpacketchecker">
-<h1>GbtPacketChecker<a class="headerlink" href="#gbtpacketchecker" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-GbtPacketChecker">
+<span id="gbtpacketchecker"></span><h1>GbtPacketChecker<a class="headerlink" href="#module-GbtPacketChecker" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="GbtPacketChecker.GbtPacketChecker">
+<em class="property">class </em><code class="sig-prename descclassname">GbtPacketChecker.</code><code class="sig-name descname">GbtPacketChecker</code><span class="sig-paren">(</span><em class="sig-param">directory</em>, <em class="sig-param">input_gbt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.chunky">
+<em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.chunky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divides a list into a list containing a lists of n number of elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ls</strong> (<em>list</em>) – a list to be divided</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – a number of elements</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.track_pl_hit">
+<em class="property">static </em><code class="sig-name descname">track_pl_hit</code><span class="sig-paren">(</span><em class="sig-param">input_pl_ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.track_pl_hit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.track_pl_hit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.extract">
+<code class="sig-name descname">extract</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts specific bits and make them into corresponding lists of Hit Map, ART data, and Region data.
+:return: Hit Map, ART data, Region Number</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.read_hitmap">
+<code class="sig-name descname">read_hitmap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.read_hitmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.read_hitmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Hit Map into a list that contains information about planes and vmm’s hit: e.g. [0.2, 2.1] when the third vmm of the first plane and the second vmm of the third plane are hit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.read_artdata">
+<code class="sig-name descname">read_artdata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.read_artdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.read_artdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts ART data into a list of hit channels: e.g. [37, 28] when channel numbers 37 and 28 are hit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.check">
+<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the actual GBT packet follow the expected / intended hits pattern by comparing the produced list to the input list.
+Just like the output format of read_hitmap() and read_artdata(), the input format of check() should be [plane.vmm, …][channel, …]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.identify_vmm">
+<code class="sig-name descname">identify_vmm</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.identify_vmm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.identify_vmm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there are possibility of misconnected fibers:
+If there are only two hits that might be mismatched, the function determines whether the corresponding two planes’ fibers are mismatched or not.
+If there are more than two hits that might be mismatched, the function prints which planes has multiple hits in {pl: count, …} format.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># First make a GBT packet</span>
+<span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
+<span class="n">test1</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="p">(</span><span class="s2">&quot;GBT_packet_dir_test/&quot;</span><span class="p">,</span><span class="s2">&quot;GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]&quot;</span><span class="p">)</span>
+<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span> <span class="c1"># third and fourth fibers swapped</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

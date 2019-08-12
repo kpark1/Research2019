@@ -178,7 +178,7 @@ class GbtPacketChecker:
 
 
 #GbtPacketMaker.GbtPacketMaker([0.0, 1.0, 2.0, 3.0],[1,2,1,2,13]).make_gbt(32, 20, "test","yes")
-#test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
+test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
 # test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])
-#test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10]
+test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10]
 #test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])  # third and fourth fiber swapped
