@@ -58,13 +58,14 @@
 
 <dl class="method">
 <dt id="GbtPacketMaker.GbtPacketMaker.chunky">
-<em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.chunky" title="Permalink to this definition">¶</a></dt>
-<dd><p>Divides a list into a list containing a lists of n number of elements.</p>
+<em class="property">static </em><code class="sig-name descname">chunky</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.chunky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.chunky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function 1: Divides a list into a list containing a lists of n number of elements.
+Function 2: Divides a string into a list of strings of a certain length n</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ls</strong> (<em>list</em>) – a list to be divided</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – a number of elements</p></li>
+<li><p><strong>input</strong> (<em>list/str</em>) – a list/string to be divided</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – lengths of lists within an output list / number of letters within an output list</p></li>
 </ul>
 </dd>
 </dl>
@@ -72,14 +73,8 @@
 
 <dl class="method">
 <dt id="GbtPacketMaker.GbtPacketMaker.read_chunks">
-<em class="property">static </em><code class="sig-name descname">read_chunks</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.read_chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.read_chunks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a list of lists of four integers into a list of binary numbers.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="GbtPacketMaker.GbtPacketMaker.to_hex">
-<em class="property">static </em><code class="sig-name descname">to_hex</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.to_hex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.to_hex" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a list of integers into a list of hexadecimal strings.</p>
+<em class="property">static </em><code class="sig-name descname">read_chunks</code><span class="sig-paren">(</span><em class="sig-param">ls</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.read_chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.read_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of lists of n integers into a list of binary numbers.</p>
 </dd></dl>
 
 <dl class="method">
@@ -90,24 +85,9 @@ and pair numbers when combining GBT packets to minimize the running time for sim
 </dd></dl>
 
 <dl class="method">
-<dt id="GbtPacketMaker.GbtPacketMaker.combine_gbt">
-<em class="property">static </em><code class="sig-name descname">combine_gbt</code><span class="sig-paren">(</span><em class="sig-param">dir_name</em>, <em class="sig-param">typ</em>, <em class="sig-param">num_regions</em>, <em class="sig-param">bc_delay</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.combine_gbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.combine_gbt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combines all GBT files of a specific pattern of regions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dir_name</strong> (<em>str</em>) – directory where GBT packets are stored</p></li>
-<li><p><strong>typ</strong> (<em>&quot;all&quot;/&quot;pair&quot;</em>) – If typ is “all”, all GBT packets are combined
-into one file with a single finish command  ( or ‘00000001 01’). If typ is “pair”, individual GBT pairs are combined
-into one file each pairs with finish command. If typ is neither of those, exit() is executed.</p></li>
-<li><p><strong>num_regions</strong> (<em>int</em>) – number of regions e.g. Regions 20, 21 are two regions</p></li>
-<li><p><strong>bc_delay</strong> (<em>int</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a single file if typ is “all” and a set of files if typ is “pair”</p>
-</dd>
-</dl>
+<dt id="GbtPacketMaker.GbtPacketMaker.to_hex">
+<em class="property">static </em><code class="sig-name descname">to_hex</code><span class="sig-paren">(</span><em class="sig-param">ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.to_hex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.to_hex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of integers into a list of hexadecimal strings.</p>
 </dd></dl>
 
 <dl class="method">
@@ -138,9 +118,19 @@ first vmm of the first plane is the last element of the list.</p>
 
 <dl class="method">
 <dt id="GbtPacketMaker.GbtPacketMaker.make_gbt">
-<code class="sig-name descname">make_gbt</code><span class="sig-paren">(</span><em class="sig-param">BCID</em>, <em class="sig-param">region</em>, <em class="sig-param">directory_name</em>, <em class="sig-param">add_line=False</em>, <em class="sig-param">second_dir='none'</em>, <em class="sig-param">make=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.make_gbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.make_gbt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a GBT packet file with a corresponding input information. If a directory doesn’t exist already,
-the function will create a new directory.</p>
+<code class="sig-name descname">make_gbt</code><span class="sig-paren">(</span><em class="sig-param">BCID</em>, <em class="sig-param">region</em>, <em class="sig-param">directory_name</em>, <em class="sig-param">add_line=False</em>, <em class="sig-param">second_dir='none'</em>, <em class="sig-param">make=True</em>, <em class="sig-param">return_dict=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.make_gbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.make_gbt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option 1: Creates a GBT packet file with a corresponding input information. If a directory doesn’t exist already,
+the function will create a new directory within the working directory.
+Option 2: Returns lines of a GBT packet with a corresponding input information.
+Option 3: Returns a dictionary of GBT packet information - {header, error, hit_map, parity, art_data}:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Returns a dictionary e.g. {&#39;Header&#39;: &#39;0000A020&#39;, &#39;Error&#39;: &#39;00&#39;, &#39;Hit Map&#39;: &#39;80402011&#39;, &#39;Parity&#39;: &#39;00&#39;, &#39;ART data&#39;: &#39;00000D204081&#39;}</span>
+<span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">13</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">return_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Returns lines of a GBT packet file</span>
+<span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">13</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">make</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Creates a GBT packet file</span>
+<span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">13</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -150,7 +140,31 @@ the function will create a new directory.</p>
 <li><p><strong>add_line</strong> (<em>True/bool/optional</em>) – If creating a single GBT file to be simulated, then add_line should be “yes”, which adds a finish command line. If creating a multiple GBT files of one more more regions to be combined later, add_line should be “no”.</p></li>
 <li><p><strong>second_dir</strong> (<em>&quot;none&quot;/str/optional</em>) – a name of the second directory if necessary when storing multiple GBT files.</p></li>
 <li><p><strong>make</strong> (<em>True/bool/optional</em>) – If True, it creates a GBT file; If False, it only returns lines that would have been printed in a GBT packet</p></li>
+<li><p><strong>return_dict</strong> (<em>True/bool/optional</em>) – If True, it creates a dictionary that returns {header, error, hit_map, parity, art_data}</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketMaker.GbtPacketMaker.combine_gbt">
+<em class="property">static </em><code class="sig-name descname">combine_gbt</code><span class="sig-paren">(</span><em class="sig-param">dir_name</em>, <em class="sig-param">typ</em>, <em class="sig-param">num_regions</em>, <em class="sig-param">bc_delay</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.combine_gbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.combine_gbt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines all GBT files of a specific pattern of regions of the given directory. If typ is “pair”,
+the combined file is created as a single file within the working directory.
+If typ is “all”, the combined files are stored within a newly created directory within the working directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_name</strong> (<em>str</em>) – directory where GBT packets are stored</p></li>
+<li><p><strong>typ</strong> (<em>&quot;all&quot;/&quot;pair&quot;</em>) – If typ is “all”, all GBT packets are combined
+into one file with a single finish command  ( or ‘00000001 01’). If typ is “pair”, individual GBT pairs are combined
+into one file each pairs with finish command. If typ is neither of those, exit() is executed.</p></li>
+<li><p><strong>num_regions</strong> (<em>int</em>) – number of regions e.g. Regions 20, 21 are two regions</p></li>
+<li><p><strong>bc_delay</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a single file if typ is “all” and a set of files if typ is “pair”</p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,8 +174,10 @@ the function will create a new directory.</p>
 <em class="property">static </em><code class="sig-name descname">vertical_pattern</code><span class="sig-paren">(</span><em class="sig-param">section</em>, <em class="sig-param">regions</em>, <em class="sig-param">offset</em>, <em class="sig-param">bc_delay=0</em>, <em class="sig-param">bc_gap_track=32</em>, <em class="sig-param">bc_gap_region=0</em>, <em class="sig-param">bc_gap_pl=1</em>, <em class="sig-param">second_dir_name='second'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.vertical_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.vertical_pattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates GBT packet files in a new directory and a combined file that has all GBT packets in a current directory
 to simulate a vertical pattern of hits in detector. If BC ID exceeds 4095, then a second directory is created
-and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">vertical_pattern</span><span class="p">(</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">bc_gap</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">second_dir_name</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.
+Upper region channels are, for example, [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, …].
+If file is successfully completed, it will print out “Combined file created” as well as a list of newly created GBT files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">vertical_pattern</span><span class="p">(</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">23</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">bc_gap</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span> <span class="n">second_dir_name</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -169,10 +185,10 @@ and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>section</strong> (<em>&quot;upper&quot;/&quot;lower&quot;/&quot;upper_specific&quot;/&quot;lower_specific&quot;</em>) – “lower” if channels hit should be of lower section or [0, 1, 2, 3, 8, 9, …] and “upper” if channels are from [4, 5, 6, 7, 12, 13, 14, …]. If “<a href="#id1"><span class="problematic" id="id2">*</span></a>_specific”, then GBT packets are combined into pairs insteand of one combined file.</p></li>
 <li><p><strong>regions</strong> (<em>list</em>) – regions for hits e.g. [20, 21]</p></li>
-<li><p><strong>offset</strong> (<em>int</em>) – Hit channel offset for x planes. 0, 1, 2, or 3 if section = “lower”, 4, 5, 6, or 7 if section = “upper”.</p></li>
+<li><p><strong>offset</strong> (<em>int</em>) – Hit channel offset / starting channel for x planes. 0, 1, 2, or 3 if section = “lower”, 4, 5, 6, or 7 if section = “upper”.</p></li>
 <li><p><strong>bc_delay</strong> (<em>0/int/optional</em>) – BC ID of the first dummy packet to allow for simulation to wait and process the first real GBT packet</p></li>
 <li><p><strong>bc_gap_track</strong> (<em>32/int/optional</em>) – BC ID difference between each GBT packets within the same region.</p></li>
-<li><p><strong>bc_gap_region</strong> (<em>0/int/optional</em>) – BC ID difference between different regions. The default value is 0.</p></li>
+<li><p><strong>bc_gap_region</strong> (<em>0/int/optional</em>) – BC ID difference between different regions/pairs. The default value is 0.</p></li>
 <li><p><strong>bc_gap_pl</strong> (<em>0/int/optional</em>) – BC ID difference between planes. The default value is 0.</p></li>
 <li><p><strong>second_dir_name</strong> (<em>&quot;second&quot;/str/optional</em>) – name of second directory if second directory is necessary.</p></li>
 </ul>
@@ -185,7 +201,8 @@ and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095
 <em class="property">static </em><code class="sig-name descname">horizontal_pattern</code><span class="sig-paren">(</span><em class="sig-param">section</em>, <em class="sig-param">regions</em>, <em class="sig-param">offset</em>, <em class="sig-param">x_vmm</em>, <em class="sig-param">x_ch_idx</em>, <em class="sig-param">input_uv_offset</em>, <em class="sig-param">uv_dir='none'</em>, <em class="sig-param">bc_delay=0</em>, <em class="sig-param">bc_gap_track=32</em>, <em class="sig-param">bc_gap_region=0</em>, <em class="sig-param">bc_gap_pl=0</em>, <em class="sig-param">second_dir_name='second'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketMaker.html#GbtPacketMaker.horizontal_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketMaker.GbtPacketMaker.horizontal_pattern" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates GBT packet files in a new directory and a combined file that has all GBT packets in a current directory
 to simulate a horizontal pattern of hits in detector. If BC ID exceeds 4095, then a second directory is created
-and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.:</p>
+and rest of the files necessary to generate a pattern have BC ID = (BC ID - 4095) and stored in a second directory.
+If file is successfully completed, it will print out “Combined file created” as well as a list of newly created GBT files:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">horizontal_pattern</span><span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">uv_dir</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
