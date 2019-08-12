@@ -40,9 +40,9 @@
 <span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">GbtPacketMaker is a class that allows the user to make a GBT(Gigabyte Transmission) packet that corresponds to the user input.</span>
 <span class="sd">The format of the input is [plane.vmm,...],[channel,...]. </span>
-<span class="sd">For instance, if the instance of the class is GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]), then GbtPacketMaker.make_gbt() would interpret as first plane&#39;s first vmm&#39;s 2nd channel, first plane&#39;s 5th vmm&#39;s 3rd channel, etc, to be hit and produce the corresponding GBT packet file.</span>
+<span class="sd">For instance, if the instance of the class is GbtPacketMaker([0.0, 0.4, 1.5, 2.6, 3.7],[1,2,4,8,13]), then GbtPacketMaker.make_gbt() would interpret first plane&#39;s first vmm&#39;s 2nd channel, first plane&#39;s 5th vmm&#39;s 3rd channel, second plane&#39;s 6th vmm&#39;s 5th channel, etc, to be hit and produce the corresponding GBT packet file.</span>
 
-<span class="sd">GbtPacketMaker also can produce two different patterns: vertical and horizontal. After producing GBT packet files of either of the patterns, the class can also combine files into one file or directory depending on user&#39;s input.    </span>
+<span class="sd">GbtPacketMaker can also produce two different patterns: vertical and horizontal. After producing GBT packet files of either of the patterns, the class cancombine files into one file or directory depending on user&#39;s input.    </span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">errno</span>
