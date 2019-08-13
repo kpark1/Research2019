@@ -54,15 +54,25 @@
 <dt id="GbtPacketChecker.GbtPacketChecker.simulate">
 <em class="property">static </em><code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param">make=False</em>, <em class="sig-param">dir_name='test'</em>, <em class="sig-param">region=20</em>, <em class="sig-param">repeat=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Option 1: Prints hit track information by simulates a GBT packet by randomly generating a possible number of hit channels and hit track information.
-Option 2: Generates a GBT packet with printed hit track information
-Recursive if asked to be repeated
-:param False/bool/optional make: If True, makes an actual GBT packet in a directory
-:param “test”/string/optional dir_name: default value is “test” (path is then “./GBT_packet_dir_test” as path is “GBT_packet_dir_%s/” % dir_name ).
-:param 20/int/optional region: region number
-:param 0/int/optional repeat: number of packets to be simulated/generated</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">repeat</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+Option 2: Generates a GBT packet with printed hit track information.
+Recursive if asked to be repeated.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generates five possible hit track</span>
+<span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">repeat</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>make</strong> (<em>False/bool/optional</em>) – If True, makes an actual GBT packet in a directory</p></li>
+<li><p><strong>dir_name</strong> (<em>&quot;test&quot;/string/optional</em>) – default value is “test” (path is then “./GBT_packet_dir_test” as path is “GBT_packet_dir_%s/” % dir_name )</p></li>
+<li><p><strong>region</strong> (<em>20/int/optional</em>) – region number</p></li>
+<li><p><strong>repeat</strong> (<em>0/int/optional</em>) – number of packets to be simulated/generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of vmm’s hit and channels’ hit in a format of [plane.vmm, …], [channel_hit,…]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

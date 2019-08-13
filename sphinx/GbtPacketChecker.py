@@ -15,17 +15,18 @@ class GbtPacketChecker:
     def simulate(make=False, dir_name='test', region=20, repeat=0):
         '''
         Option 1: Prints hit track information by simulates a GBT packet by randomly generating a possible number of hit channels and hit track information.
-        Option 2: Generates a GBT packet with printed hit track information
-        Recursive if asked to be repeated
-        :param False/bool/optional make: If True, makes an actual GBT packet in a directory
-        :param "test"/string/optional dir_name: default value is "test" (path is then "./GBT_packet_dir_test" as path is "GBT_packet_dir_%s/" % dir_name ).
-        :param 20/int/optional region: region number
-        :param 0/int/optional repeat: number of packets to be simulated/generated ::
+        Option 2: Generates a GBT packet with printed hit track information.
+        Recursive if asked to be repeated.::
 
-
+                # Generates five possible hit track
                 GbtPacketChecker.simulate(repeat=5)
 
 
+        :param False/bool/optional make: If True, makes an actual GBT packet in a directory
+        :param "test"/string/optional dir_name: default value is "test" (path is then "./GBT_packet_dir_test" as path is "GBT_packet_dir_%s/" % dir_name )
+        :param 20/int/optional region: region number
+        :param 0/int/optional repeat: number of packets to be simulated/generated
+        :return: a list of vmm's hit and channels' hit in a format of [plane.vmm, ...], [channel_hit,...]
         '''
         vmm_list = []
         channel_list = []
@@ -246,4 +247,4 @@ class GbtPacketChecker:
 # test1.identify_vmm([0.2, 1.0, 1.2,= 2.2, 3.2],[10, 10, 10, 11, 10])
 #test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10])
 #test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])  # third and fourth fiber swapped
-#GbtPacketChecker.simulate(repeat=5)
+GbtPacketChecker.simulate(repeat=5)

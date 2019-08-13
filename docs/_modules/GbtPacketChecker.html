@@ -54,17 +54,18 @@
     <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="n">make</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Option 1: Prints hit track information by simulates a GBT packet by randomly generating a possible number of hit channels and hit track information.</span>
-<span class="sd">        Option 2: Generates a GBT packet with printed hit track information</span>
-<span class="sd">        Recursive if asked to be repeated</span>
-<span class="sd">        :param False/bool/optional make: If True, makes an actual GBT packet in a directory</span>
-<span class="sd">        :param &quot;test&quot;/string/optional dir_name: default value is &quot;test&quot; (path is then &quot;./GBT_packet_dir_test&quot; as path is &quot;GBT_packet_dir_%s/&quot; % dir_name ).</span>
-<span class="sd">        :param 20/int/optional region: region number</span>
-<span class="sd">        :param 0/int/optional repeat: number of packets to be simulated/generated ::</span>
+<span class="sd">        Option 2: Generates a GBT packet with printed hit track information.</span>
+<span class="sd">        Recursive if asked to be repeated.::</span>
 
-
+<span class="sd">                # Generates five possible hit track</span>
 <span class="sd">                GbtPacketChecker.simulate(repeat=5)</span>
 
 
+<span class="sd">        :param False/bool/optional make: If True, makes an actual GBT packet in a directory</span>
+<span class="sd">        :param &quot;test&quot;/string/optional dir_name: default value is &quot;test&quot; (path is then &quot;./GBT_packet_dir_test&quot; as path is &quot;GBT_packet_dir_%s/&quot; % dir_name )</span>
+<span class="sd">        :param 20/int/optional region: region number</span>
+<span class="sd">        :param 0/int/optional repeat: number of packets to be simulated/generated</span>
+<span class="sd">        :return: a list of vmm&#39;s hit and channels&#39; hit in a format of [plane.vmm, ...], [channel_hit,...]</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">vmm_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">channel_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -285,7 +286,7 @@
 <span class="c1"># test1.identify_vmm([0.2, 1.0, 1.2,= 2.2, 3.2],[10, 10, 10, 11, 10])</span>
 <span class="c1">#test1.identify_vmm([0.2, 1.2, 2.2, 1.0, 3.2],[10, 11, 10, 10, 10])</span>
 <span class="c1">#test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 10, 11, 10])  # third and fourth fiber swapped</span>
-<span class="c1">#GbtPacketChecker.simulate(repeat=5)</span>
+<span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">repeat</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
           </div>
