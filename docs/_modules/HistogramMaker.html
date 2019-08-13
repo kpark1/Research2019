@@ -49,29 +49,13 @@
 <span class="c1">#!/usr/local/bin/python3</span>
 <span class="c1"># #UNCOMMENT BELOW(IMPORT) BEFORE EXECUTING THE CODE</span>
 <span class="c1">#from matplotlib.pylab import *</span>
+<span class="kn">import</span> <span class="nn">GbtPacketMaker</span>
 
 
 <div class="viewcode-block" id="HistogramMaker"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker">[docs]</a><span class="k">class</span> <span class="nc">HistogramMaker</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
-<div class="viewcode-block" id="HistogramMaker.chunky"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.chunky">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">chunky</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Divides a list into a list containing a lists of n number of elements.</span>
-
-<span class="sd">        :param list/str input: a list/string to be divided</span>
-<span class="sd">        :param int n: lengths of lists within an output list / number of letters within an output list</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="nb">input</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">n</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span><span class="n">exit</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">output</span></div>
 
 <div class="viewcode-block" id="HistogramMaker.check"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -82,31 +66,33 @@
             <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="s2">&quot;a3&quot;</span> <span class="ow">and</span> <span class="s2">&quot;A3&quot;</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> We can&#39;t find the header and we expect it! </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+                <span class="n">exit</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="HistogramMaker.extract"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns a list of elements which are each lines of simulated data. e.g. [[&#39;A3FF&#39;, &#39;0027&#39;, &#39;0004&#39;, &#39;0004&#39;, ...],[&#39;A3DE&#39;,...],...]</span>
+<span class="sd">        Extracts lines from the simulated data file and converts them into a list of four bits after checking if there are headers For all plane channel information.</span>
+<span class="sd">        e.g. [[&#39;A3FF&#39;, &#39;0027&#39;, &#39;0004&#39;, &#39;0004&#39;, ...],[&#39;A3DE&#39;,...],...]</span>
+<span class="sd">        :return: a list of elements which are each lines of simulated data</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">line_ls</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">readfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">readfile</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-            <span class="n">line_condensed</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">letter</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span> <span class="ow">and</span> <span class="n">letter</span> <span class="o">!=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
-                    <span class="n">line_condensed</span> <span class="o">+=</span> <span class="n">letter</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="n">line_condensed</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">letter</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span> <span class="ow">and</span> <span class="n">letter</span> <span class="o">!=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+                        <span class="n">line_condensed</span> <span class="o">+=</span> <span class="n">letter</span>
 
-            <span class="n">line_chunks</span> <span class="o">=</span> <span class="n">HistogramMaker</span><span class="o">.</span><span class="n">chunky</span><span class="p">(</span><span class="n">line_condensed</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
-            <span class="n">line_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_chunks</span><span class="p">)</span>
+                <span class="n">line_chunks</span> <span class="o">=</span> <span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">chunky</span><span class="p">(</span><span class="n">line_condensed</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+                <span class="n">line_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_chunks</span><span class="p">)</span>
 
-        <span class="n">readfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">line_ls</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">line_ls</span></div>
 
 <div class="viewcode-block" id="HistogramMaker.select"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_info</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns specific information with user input&#39;s idx_info of each line of simulated data.</span>
-<span class="sd">        Extracts integer slope information in 2 bits hexadecimal strings from a GBT file after checking if there are headers For all plane channel information, .</span>
+<span class="sd">        Selects specific information with user input&#39;s idx_info of each line of simulated data.</span>
 <span class="sd">        :param [2,3,4,5,6,7,8,9]/list/optional idx_info: indices of information when lines of simulated data are divided into separate 2-bits e.g. v0 plane channel/strip information is idx_info=[2]</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">selected_ls</span> <span class="o">=</span> <span class="p">[]</span>
@@ -122,12 +108,13 @@
 
             <span class="n">selected_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
             <span class="n">err_msg_ls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
         <span class="k">return</span> <span class="n">selected_ls</span><span class="p">,</span> <span class="n">err_msg_ls</span></div>
 
 <div class="viewcode-block" id="HistogramMaker.categorize"><a class="viewcode-back" href="../HistogramMaker.html#HistogramMaker.HistogramMaker.categorize">[docs]</a>    <span class="k">def</span> <span class="nf">categorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_info</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Organizes selected lists of information corresponding to a user input variables (indicated by indices) and makes a dictionary with keys named after variables and all of their values.</span>
-<span class="sd">        If err_msg is not default value &#39;g&#39;, then, it only selects and organizes the values with corresponding error message digit</span>
+<span class="sd">        If err_msg is not default value &#39;g&#39;, then, it only selects and organizes the values with corresponding error message digit.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">err_msg</span> <span class="o">==</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span><span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># default is &#39;eg&#39; which then looks at every line with all types of error messages</span>
         <span class="k">else</span><span class="p">:</span><span class="n">skip</span> <span class="o">=</span> <span class="kc">False</span>
@@ -160,6 +147,7 @@
 
 <span class="sd">            # Plotting a histogram of one example simulated GBT file.</span>
 <span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_slope_histogram()</span>
+
 <span class="sd">            # Plotting one histogram of combined data from two example simulated GBT files.</span>
 <span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_slope_histogram(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;)</span>
 
@@ -220,6 +208,7 @@
 
 <span class="sd">            # Plotting a histogram of one example simulated GBT file with error messages.</span>
 <span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_histogram_error()</span>
+
 <span class="sd">            # Plotting one histogram of combined data from two example simulated GBT files.</span>
 <span class="sd">            HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt&quot;).plot_histogram_error(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt&quot;)</span>
 
@@ -290,8 +279,7 @@
 
 
 <span class="c1">#HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first_check.txt&quot;).plot_histogram_error([2,3,4,5,6,7], second_file=&quot;copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second_check.txt&quot;)</span>
-
-<span class="c1">#b=HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap_pl_1.txt&quot;).plot_histogram([2,3,4,5,6,7])</span>
+<span class="c1">#HistogramMaker(&quot;copied_simdata/vert_upper_offset4_same_bc_gap_pl_1.txt&quot;).plot_histogram([2,3,4,5,6,7])</span>
 </pre></div>
 
           </div>

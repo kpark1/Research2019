@@ -10,29 +10,13 @@ When creating an instance of the class, make sure the input datafile (simulated 
 #!/usr/local/bin/python3
 # #UNCOMMENT BELOW(IMPORT) BEFORE EXECUTING THE CODE
 #from matplotlib.pylab import *
+import GbtPacketMaker
 
 
 class HistogramMaker:
 
     def __init__(self, file):
         self.file = "./"+str(file)
-
-    @staticmethod
-    def chunky(input, n):
-        '''
-        Divides a list into a list containing a lists of n number of elements.
-
-        :param list/str input: a list/string to be divided
-        :param int n: lengths of lists within an output list / number of letters within an output list
-        '''
-        if isinstance(input, list):
-            while len(input) % n != 0:
-                input.insert(0, 0)
-            output = [input[i * n:(i + 1) * n] for i in range((len(input) + n - 1) // n)]
-        elif isinstance(input, str):
-            output = [input[i:i + n] for i in range(0, len(input), n)]
-        else:exit()
-        return output
 
     def check(self):
         '''
@@ -43,31 +27,33 @@ class HistogramMaker:
             if line[0:2] != ("a3" and "A3"):
                 print("\n We can't find the header and we expect it! \n")
                 print(line[0:2])
-                sys.exit()
+                exit()
 
     def extract(self):
         '''
-        Returns a list of elements which are each lines of simulated data. e.g. [['A3FF', '0027', '0004', '0004', ...],['A3DE',...],...]
+        Extracts lines from the simulated data file and converts them into a list of four bits after checking if there are headers For all plane channel information.
+        e.g. [['A3FF', '0027', '0004', '0004', ...],['A3DE',...],...]
+        :return: a list of elements which are each lines of simulated data
         '''
         HistogramMaker.check(self)
         line_ls = []
-        readfile = open(self.file, 'r')
-        for line in readfile.readlines():
-            line_condensed = ""
-            for letter in line:
-                if letter != " " and letter !="\n":
-                    line_condensed += letter
+        with open(self.file, 'r') as f:
+            for line in f.readlines():
+                line_condensed = ""
+                for letter in line:
+                    if letter != " " and letter !="\n":
+                        line_condensed += letter
 
-            line_chunks = HistogramMaker.chunky(line_condensed,4)
-            line_ls.append(line_chunks)
+                line_chunks = GbtPacketMaker.GbtPacketMaker.chunky(line_condensed,4)
+                line_ls.append(line_chunks)
 
-        readfile.close()
+        print(line_ls)
+        exit()
         return line_ls
 
     def select(self, idx_info=[2,3,4,5,6,7,8,9]):
         '''
-        Returns specific information with user input's idx_info of each line of simulated data.
-        Extracts integer slope information in 2 bits hexadecimal strings from a GBT file after checking if there are headers For all plane channel information, .
+        Selects specific information with user input's idx_info of each line of simulated data.
         :param [2,3,4,5,6,7,8,9]/list/optional idx_info: indices of information when lines of simulated data are divided into separate 2-bits e.g. v0 plane channel/strip information is idx_info=[2]
         '''
         selected_ls = []
@@ -83,12 +69,13 @@ class HistogramMaker:
 
             selected_ls.append(selected)
             err_msg_ls.append(info[i][1][0])
+
         return selected_ls, err_msg_ls
 
     def categorize(self, idx_info=[2,3,4,5,6,7,8,9], err_msg='g'):
         '''
         Organizes selected lists of information corresponding to a user input variables (indicated by indices) and makes a dictionary with keys named after variables and all of their values.
-        If err_msg is not default value 'g', then, it only selects and organizes the values with corresponding error message digit
+        If err_msg is not default value 'g', then, it only selects and organizes the values with corresponding error message digit.
         '''
         if err_msg == 'g':skip = True  # default is 'eg' which then looks at every line with all types of error messages
         else:skip = False
@@ -121,6 +108,7 @@ class HistogramMaker:
 
             # Plotting a histogram of one example simulated GBT file.
             HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_slope_histogram()
+
             # Plotting one histogram of combined data from two example simulated GBT files.
             HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_slope_histogram("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt")
 
@@ -181,6 +169,7 @@ class HistogramMaker:
 
             # Plotting a histogram of one example simulated GBT file with error messages.
             HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_histogram_error()
+
             # Plotting one histogram of combined data from two example simulated GBT files.
             HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first.txt").plot_histogram_error("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second.txt")
 
@@ -251,5 +240,4 @@ class HistogramMaker:
 
 
 #HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_first_check.txt").plot_histogram_error([2,3,4,5,6,7], second_file="copied_simdata/vert_upper_offset4_same_bc_gap96_pl_1_pair20_21_second_check.txt")
-
-#b=HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap_pl_1.txt").plot_histogram([2,3,4,5,6,7])
+#HistogramMaker("copied_simdata/vert_upper_offset4_same_bc_gap_pl_1.txt").plot_histogram([2,3,4,5,6,7])

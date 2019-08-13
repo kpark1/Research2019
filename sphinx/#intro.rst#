@@ -1,0 +1,8 @@
+GbtPacketMaker, GbtPacketChecker, HistogramMaker require installing several modules listed in requirements.txt.
+To install these modules::
+   pip install -r requirements.txt
+
+Or manually install modules by ::
+   pip instal <module>
+
+Additionally, GbtPacketChecker and HistogramMaker requires GbtPacketMaker class to exist in the same directory to import several functions.
