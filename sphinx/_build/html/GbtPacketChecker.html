@@ -45,7 +45,8 @@
             
   <div class="section" id="module-GbtPacketChecker">
 <span id="gbtpacketchecker"></span><h1>GbtPacketChecker<a class="headerlink" href="#module-GbtPacketChecker" title="Permalink to this headline">¶</a></h1>
-<p>GbtPacketChecker has two main functions. It can read a GBT packet before its simulation to check whether the intended hit data, which the user feeds in as an input, matches with the user’s GBT packet data. GbtPacketChecker’s second function includes determining and returning which planes, vmms, and channels are hit in a give GBT packet and comparing them  with the intended hit data.</p>
+<p>GbtPacketChecker has two main functions. It can read a GBT packet before its simulation to check whether the intended hit data, which the user feeds in as an input, matches with the user’s GBT packet data. GbtPacketChecker’s second function includes determining and returning which planes, vmms, and channels are hit in a give GBT packet and comparing them  with the intended hit data. 
+Currently, GbtPacketChecker can only check mismatch of one GBT packet hit track within one region.</p>
 <dl class="class">
 <dt id="GbtPacketChecker.GbtPacketChecker">
 <em class="property">class </em><code class="sig-prename descclassname">GbtPacketChecker.</code><code class="sig-name descname">GbtPacketChecker</code><span class="sig-paren">(</span><em class="sig-param">directory</em>, <em class="sig-param">input_gbt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker" title="Permalink to this definition">¶</a></dt>
@@ -129,19 +130,26 @@ Similar to the output format of read_hitmap() and read_artdata(), the input form
 There are three possible cases:
 Case 1: The number of hits in Hit Map’s or ART data in GBT packet and given input are different in which case the statement - “The number of hits are different for intended hits and GBT packet hit data.” - is printed.
 Case 2: There are the same number of hits, but the hit track translated from GBT packet and the hit track of the user input don’t match. Returns False.
-Case 3: There are the same number of hits and the hit tracks match. Returns True.
-:param []/list hitmap_expected: If checking for a real GBT packet, hitmap_intended would be the input. If checking for a simulated cable swap hit map,
-hitmap_swap would be the input as the code is checking whether the hit map with simulated cable swaps can generate the same hit map as the GBT packet, which would confirm / do not confirm cable swapping possibilities.
-:param [[]/list artdata_expected: If checking for a real GBT packet, artdata_intended would be the input. If checking for a simulated cable swap hit map, artdata_swap would be the input.
-:param False/bool/optional print_suppress: If True, print statements regarding whether the expected hit track and translated hit track from the GBT equal to each other can be suppressed except for Case 1.
-:[ara, False/bool/optional swap: If True, label for the hit map and art data expected are changed for the print statement purpose.
-:return bool: Returns True if expected hit pattern and the GBT packet has the same hit track and false otherwise.</p>
+Case 3: There are the same number of hits and the hit tracks match. Returns True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hitmap_expected</strong> (<em>[</em><em>]</em><em>/list</em>) – If checking for a real GBT packet, hitmap_intended would be the input. If checking for a simulated cable swap hit map, hitmap_swap would be the input as the code is checking whether the hit map with simulated cable swaps can generate the same hit map as the GBT packet, which would confirm / do not confirm cable swapping possibilities.</p></li>
+<li><p><strong>artdata_expected</strong> (<em>[</em><em>]</em><em>/list</em>) – If checking for a real GBT packet, artdata_intended would be the input. If checking for a simulated cable swap hit map, artdata_swap would be the input.</p></li>
+<li><p><strong>print_suppress</strong> (<em>False/bool/optional</em>) – If True, print statements regarding whether the expected hit track and translated hit track from the GBT equal to each other can be suppressed except for Case 1.</p></li>
+<li><p><strong>swap</strong> (<em>False/bool/optional</em>) – If True, label for the hit map and art data expected are changed for the print statement purpose.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bool</dt>
+<dd class="field-even"><p>Returns True if expected hit pattern and the GBT packet has the same hit track and false otherwise.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="GbtPacketChecker.GbtPacketChecker.identify_vmm">
-<code class="sig-name descname">identify_vmm</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.identify_vmm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.identify_vmm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if there are possibilities of misconnected fibers and returns possible swaps.:</p>
+<dt id="GbtPacketChecker.GbtPacketChecker.identify_swaps">
+<code class="sig-name descname">identify_swaps</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.identify_swaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.identify_swaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there are possibilities of misconnected fibers and returns possible swaps for one region.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a GBT packet in a directory called &quot;GBT_packet_dir_test&quot;</span>
 <span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
 
@@ -149,8 +157,8 @@ hitmap_swap would be the input as the code is checking whether the hit map with 
 <span class="n">test1</span> <span class="o">=</span> <span class="n">GbtPacketChecker</span><span class="p">(</span><span class="s2">&quot;GBT_packet_dir_test/&quot;</span><span class="p">,</span><span class="s2">&quot;GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]&quot;</span><span class="p">)</span>
 
 <span class="c1"># Check whether the intended hit data match with the data within the GBT packet</span>
-<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Match</span>
-<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Does Not Match</span>
+<span class="n">test1</span><span class="o">.</span><span class="n">identify_swaps</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Match</span>
+<span class="n">test1</span><span class="o">.</span><span class="n">identify_swaps</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Does Not Match</span>
 </pre></div>
 </div>
 <dl class="field-list simple">

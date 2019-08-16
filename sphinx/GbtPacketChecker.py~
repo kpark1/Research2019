@@ -1,5 +1,6 @@
 '''
 GbtPacketChecker has two main functions. It can read a GBT packet before its simulation to check whether the intended hit data, which the user feeds in as an input, matches with the user's GBT packet data. GbtPacketChecker's second function includes determining and returning which planes, vmms, and channels are hit in a give GBT packet and comparing them  with the intended hit data. 
+Currently, GbtPacketChecker can only check mismatch of one GBT packet hit track within one region.
 '''
 #!usr/bin/python3
 from collections import Counter
@@ -96,8 +97,6 @@ class GbtPacketChecker:
             sim_vmm_list.append(new_vmm_list)
 
         return change_idx_list, sim_vmm_list
-
-
 
     @staticmethod
     def track_pl_hit(input_pl_ls):                          # returns a dictionary of planes that have more than one hits
@@ -196,14 +195,14 @@ class GbtPacketChecker:
         Case 1: The number of hits in Hit Map's or ART data in GBT packet and given input are different in which case the statement - "The number of hits are different for intended hits and GBT packet hit data." - is printed.
         Case 2: There are the same number of hits, but the hit track translated from GBT packet and the hit track of the user input don't match. Returns False.
         Case 3: There are the same number of hits and the hit tracks match. Returns True.
+
         :param []/list hitmap_expected: If checking for a real GBT packet, hitmap_intended would be the input. If checking for a simulated cable swap hit map,
         hitmap_swap would be the input as the code is checking whether the hit map with simulated cable swaps can generate the same hit map as the GBT packet, which would confirm / do not confirm cable swapping possibilities.
-        :param [[]/list artdata_expected: If checking for a real GBT packet, artdata_intended would be the input. If checking for a simulated cable swap hit map, artdata_swap would be the input.
+        :param []/list artdata_expected: If checking for a real GBT packet, artdata_intended would be the input. If checking for a simulated cable swap hit map, artdata_swap would be the input.
         :param False/bool/optional print_suppress: If True, print statements regarding whether the expected hit track and translated hit track from the GBT equal to each other can be suppressed except for Case 1.
-        :[ara, False/bool/optional swap: If True, label for the hit map and art data expected are changed for the print statement purpose.
+        :param False/bool/optional swap: If True, label for the hit map and art data expected are changed for the print statement purpose.
         :return bool: Returns True if expected hit pattern and the GBT packet has the same hit track and false otherwise.
         '''
-
         hitmap_compare, artdata_compare = GbtPacketChecker.read_hitmap(self), GbtPacketChecker.read_artdata(self)
         hitmap_expected, artdata_expected = zip(*sorted(zip(hitmap_expected, artdata_expected)))  # sorts in an ascending order
         hitmap_expected, artdata_expected = list(hitmap_expected), list(artdata_expected)
@@ -217,7 +216,6 @@ class GbtPacketChecker:
         else:
             print("ERROR: Wrong input for new_hitmap and new_artdata.")
             exit()
-
 
         if len(hitmap_compare) != len(artdata_compare):
             print("ERROR: The lengths of hit map and ART data read don't match up. Fix the code.")
@@ -240,35 +238,29 @@ class GbtPacketChecker:
 
         return does_match
 
-
-
-    def identify_vmm(self, hitmap_intended, artdata_intended):     # identify which vmm's are in correctly connected
+    def identify_swaps(self, hitmap_intended, artdata_intended):     # identify which vmm's are in correctly connected
         '''
-        Checks if there are possibilities of misconnected fibers and returns possible swaps.
-
-            # Make a GBT packet in a directory called "GBT_packet_dir_test"
-            GbtPacketMaker.GbtPacketMaker([0.2, 1.0, 1.2, 2.2 3.2],[10,10,12,11,10]).make_gbt(32, 20, "test","yes")
-
-            #Create an instance of the GbtPacketChecker with the created GBT packet
-            test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
-
-            # Check whether the intended hit data match with the data within the GBT packet
-            test1.identify_vmm([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 12, 11, 10])      # Match
-            test1.identify_vmm([0.2, 1.2, 2.0, 2.2, 3.2],[10, 10, 10, 11, 10])      # Does Not Match
+        Checks if there are possibilities of misconnected fibers and returns possible swaps for one region.::
 
 
-        :return: a list of strings containing original indices -> swapped indices to explain possible cabling swap[s] e.g. [1, 2] -> [2, 1] means that if intended hit were [0.2, 1.2, 2.0, 2.2, 3.2], [10, 10, 10, 11, 10],
-        the cables swapping resulted in [0.2, 2.2, 1.0, 1.2, 3.2], [10, 10, 10, 11, 10] which can be reordered into [0.2, 1.0, 1.2, 2.2, 3.2], [10, 10, 11, 10, 10, 10] and thus match the original GBT packet hit track. This indicates that
-        there is a possibility that the cabling order was not correct.
+                # Make a GBT packet in a directory called "GBT_packet_dir_test"
+                GbtPacketMaker.GbtPacketMaker([0.2, 1.0, 1.2, 2.2 3.2],[10,10,12,11,10]).make_gbt(32, 20, "test","yes")
+
+                #Create an instance of the GbtPacketChecker with the created GBT packet
+                test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
+
+                # Check whether the intended hit data match with the data within the GBT packet
+                test1.identify_swaps([0.2, 1.0, 1.2, 2.2, 3.2],[10, 10, 11, 10, 10])      # Match
+                test1.identify_swaps([0.2, 1.2, 2.0, 2.2, 3.2],[10, 10, 10, 11, 10])      # Does Not Match
+
+
+        :return: a list of strings containing original indices -> swapped indices to explain possible cabling swap[s] e.g. [1, 2] -> [2, 1] means that if intended hit were [0.2, 1.2, 2.0, 2.2, 3.2], [10, 10, 10, 11, 10], the cables swapping resulted in [0.2, 2.2, 1.0, 1.2, 3.2], [10, 10, 10, 11, 10] which can be reordered into [0.2, 1.0, 1.2, 2.2, 3.2], [10, 10, 11, 10, 10, 10] and thus match the original GBT packet hit track. This indicates that there is a possibility that the cabling order was not correct.
         '''
         _, _, region = GbtPacketChecker.extract(self)
-        hitmap_read, artdata_read = GbtPacketChecker.read_hitmap(self), GbtPacketChecker.read_artdata(self) # necessary only for printing below
+        hitmap_read, artdata_read = GbtPacketChecker.read_hitmap(self), GbtPacketChecker.read_artdata(self)     # repetitive, but necessary for printing below
         hitmap_intended, artdata_intended = zip(*sorted(zip(hitmap_intended, artdata_intended)))  # in case not in order
         hitmap_intended, artdata_intended = list(hitmap_intended), list(artdata_intended)
-        #print("Expected hit planes/vmm's = %s, Expected hit channels = %s, GBT Packet's hit planes/vmm's = %s,
-                #GBT Packet's hit channels = %s" %(hitmap_intended, artdata_intended, hitmap_read, artdata_read))
-
-        if GbtPacketChecker.check(self, hitmap_intended, artdata_intended): # checks if expected hit data and GBT packet hit data match up
+        if GbtPacketChecker.check(self, hitmap_intended, artdata_intended):     # checks if expected hit data and GBT packet hit data match up
             print(hitmap_intended, artdata_intended, hitmap_read, artdata_read)
             print("Intended hits and Hit Map and ART data read match up so no need for further investigation.")
             exit()
@@ -277,8 +269,8 @@ class GbtPacketChecker:
         all_possible_swaps = []
         all_possible_swaps_idx = []
         for hitmap, change_idx in zip(new_vmm_list, change_idx_list):
-            print("_____")
-            print(hitmap, artdata_intended, change_idx)
+            # print("_____")
+            # print(hitmap, artdata_intended, change_idx)
             vmm_swap, channel_swap = zip(*sorted(zip(hitmap, artdata_intended)))
             vmm_swap, channel_swap = list(vmm_swap), list(channel_swap)
             if GbtPacketChecker.check(self, vmm_swap, channel_swap, print_suppress=True, swap=True):
@@ -292,6 +284,7 @@ class GbtPacketChecker:
             print("No possible swaps.")
             exit()
 
+
 #GbtPacketMaker.GbtPacketMaker([0.0, 1.0, 2.0, 3.0],[1,2,1,2,13]).make_gbt(32, 20, "test","yes")
 #test1 = GbtPacketChecker("GBT_packet_dir_test/","GBT_packet_BC=32_fiber=20_[0.2, 1.0, 1.2, 2.2, 3.2][10, 10, 11, 10, 10]")
-#test1.identify_vmm([0.2, 1.2, 2.0, 2.2, 3.2],[10, 10, 10, 11, 10])
+#test1.identify_swaps([0.2, 1.2, 2.0, 2.2, 3.2],[10, 10, 10, 11, 10])
