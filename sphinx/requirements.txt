@@ -6,3 +6,4 @@ Counter
 pandas
 matplotlib
 random
+itertools

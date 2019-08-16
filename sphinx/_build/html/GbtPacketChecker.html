@@ -69,8 +69,22 @@ Recursive if asked to be repeated.:</p>
 <li><p><strong>repeat</strong> (<em>0/int/optional</em>) – number of packets to be simulated/generated</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Return list, list</dt>
 <dd class="field-even"><p>a list of vmm’s hit and channels’ hit in a format of [plane.vmm, …], [channel_hit,…]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="GbtPacketChecker.GbtPacketChecker.simulate_cable_swap">
+<em class="property">static </em><code class="sig-name descname">simulate_cable_swap</code><span class="sig-paren">(</span><em class="sig-param">input_vmm_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.simulate_cable_swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.simulate_cable_swap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all possible scenarios of swapping cables by using itertools.permutations().:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GbtPacketChecker</span><span class="o">.</span><span class="n">simulate_swap</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of strings that explain cable swapping in a format of ‘&lt;a list of original indices&gt; -&gt;  &lt;a list of indices after swapping&gt;’</p>
 </dd>
 </dl>
 </dd></dl>
@@ -78,20 +92,22 @@ Recursive if asked to be repeated.:</p>
 <dl class="method">
 <dt id="GbtPacketChecker.GbtPacketChecker.track_pl_hit">
 <em class="property">static </em><code class="sig-name descname">track_pl_hit</code><span class="sig-paren">(</span><em class="sig-param">input_pl_ls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.track_pl_hit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.track_pl_hit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Builds and returns a dictionary of planes that have more than one hits
+:return dict: format - {pl: hit_counts, …} e.g. if on the first plane, there are two hits, then {1: 2, …}</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="GbtPacketChecker.GbtPacketChecker.extract">
 <code class="sig-name descname">extract</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts specific bits and make them into corresponding lists of Hit Map, ART data, and region number.
-:return: Hit Map, ART data, region Number</p>
+:return str, str, str: Hit Map, ART data, region Number</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="GbtPacketChecker.GbtPacketChecker.read_hitmap">
 <code class="sig-name descname">read_hitmap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.read_hitmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.read_hitmap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts Hit Map into a list that contains information about planes and vmm’s hit
-:return: a list in a format [plane.vmm,…]
+:return list: a list in a format [plane.vmm,…]
 e.g. Returns [0.2, 2.1] when the third vmm of the first plane and the second vmm of the third plane are hit.</p>
 </dd></dl>
 
@@ -99,26 +115,33 @@ e.g. Returns [0.2, 2.1] when the third vmm of the first plane and the second vmm
 <dt id="GbtPacketChecker.GbtPacketChecker.read_artdata">
 <code class="sig-name descname">read_artdata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.read_artdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.read_artdata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts ART data into a list of hit channels
-:return: [channel_hit, …]
+:return list: [channel_hit, …]
 e.g. Returns [37, 28] when channel numbers 37 and 28 are hit.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="GbtPacketChecker.GbtPacketChecker.check">
-<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em>, <em class="sig-param">new_hitmap=[]</em>, <em class="sig-param">new_artdata=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.check" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">hitmap_expected</em>, <em class="sig-param">artdata_expected</em>, <em class="sig-param">print_suppress=False</em>, <em class="sig-param">swap=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.check" title="Permalink to this definition">¶</a></dt>
 <dd><p>Option 1: Checks if the actual GBT packet follow the expected hit pattern by comparing the produced list to the input list.
 Option 2: Checks if the input Hit Map and ART data follow the expected hit pattern after swapping fibers. This option is chosen if new_hitmap and new_artdata are not empty lists and their lenghts are the same.
-The code exits if the lengths of hit vmm’s and channel’s are not equal.
+The code exits if either the lengths of hit vmm’s and channel’s are not equal or the length of new_hitmap and new_artdata don’t equal to each other.
 Similar to the output format of read_hitmap() and read_artdata(), the input format of check() should be [plane.vmm, …][channel, …]
-:return: Returns True if expected hit pattern and the GBT packet has the same hit track and false otherwise.</p>
+There are three possible cases:
+Case 1: The number of hits in Hit Map’s or ART data in GBT packet and given input are different in which case the statement - “The number of hits are different for intended hits and GBT packet hit data.” - is printed.
+Case 2: There are the same number of hits, but the hit track translated from GBT packet and the hit track of the user input don’t match. Returns False.
+Case 3: There are the same number of hits and the hit tracks match. Returns True.
+:param []/list hitmap_expected: If checking for a real GBT packet, hitmap_intended would be the input. If checking for a simulated cable swap hit map,
+hitmap_swap would be the input as the code is checking whether the hit map with simulated cable swaps can generate the same hit map as the GBT packet, which would confirm / do not confirm cable swapping possibilities.
+:param [[]/list artdata_expected: If checking for a real GBT packet, artdata_intended would be the input. If checking for a simulated cable swap hit map, artdata_swap would be the input.
+:param False/bool/optional print_suppress: If True, print statements regarding whether the expected hit track and translated hit track from the GBT equal to each other can be suppressed except for Case 1.
+:[ara, False/bool/optional swap: If True, label for the hit map and art data expected are changed for the print statement purpose.
+:return bool: Returns True if expected hit pattern and the GBT packet has the same hit track and false otherwise.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="GbtPacketChecker.GbtPacketChecker.identify_vmm">
 <code class="sig-name descname">identify_vmm</code><span class="sig-paren">(</span><em class="sig-param">hitmap_intended</em>, <em class="sig-param">artdata_intended</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GbtPacketChecker.html#GbtPacketChecker.identify_vmm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GbtPacketChecker.GbtPacketChecker.identify_vmm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if there are possibilities of misconnected fibers.
-If there are only two hits that might be mismatched, the function determines whether the corresponding two planes’ fibers are mismatched or not.
-If there are more than two hits that might be mismatched, the function prints which planes has multiple hits in {pl: count, …} format.:</p>
+<dd><p>Checks if there are possibilities of misconnected fibers and returns possible swaps.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a GBT packet in a directory called &quot;GBT_packet_dir_test&quot;</span>
 <span class="n">GbtPacketMaker</span><span class="o">.</span><span class="n">GbtPacketMaker</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">make_gbt</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
 
@@ -127,9 +150,14 @@ If there are more than two hits that might be mismatched, the function prints wh
 
 <span class="c1"># Check whether the intended hit data match with the data within the GBT packet</span>
 <span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Match</span>
-<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>       <span class="c1"># Third and fourth fibers swapped</span>
+<span class="n">test1</span><span class="o">.</span><span class="n">identify_vmm</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>      <span class="c1"># Does Not Match</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of strings containing original indices -&gt; swapped indices to explain possible cabling swap[s] e.g. [1, 2] -&gt; [2, 1] means that if intended hit were [0.2, 1.2, 2.0, 2.2, 3.2], [10, 10, 10, 11, 10], the cables swapping resulted in [0.2, 2.2, 1.0, 1.2, 3.2], [10, 10, 10, 11, 10] which can be reordered into [0.2, 1.0, 1.2, 2.2, 3.2], [10, 10, 11, 10, 10, 10] and thus match the original GBT packet hit track. This indicates that there is a possibility that the cabling order was not correct.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
